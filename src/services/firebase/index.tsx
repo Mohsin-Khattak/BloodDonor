@@ -38,6 +38,9 @@ export const signInWithEmailAndPassword = async (email:string,password:string) =
     throw SERVICES._returnError(error);
   }
 }
+export const passwordResetWithEmail = (email:string) => {
+  return firebase.auth().sendPasswordResetEmail(email);
+};
 
 export const uploadFile = async (image: string) => {
   try {

@@ -6,5 +6,6 @@ type RootStackParamList = {
   Login: undefined;
   Signup: undefined;
   AddTask:Task|undefined,
+  Forgot:undefined;
 };
 export default RootStackParamList;

@@ -11,6 +11,7 @@ import Home from '../screens/home';
 import AddTask from '../screens/add-task';
 import Login from '../screens/login';
 import Signup from '../screens/signup';
+import Forgot from 'screens/forgot';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export const RootNavigator = () => {
@@ -27,6 +28,7 @@ export const RootNavigator = () => {
         <Stack.Screen name="Splash" component={Splash} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Signup" component={Signup} />
+        <Stack.Screen name="Forgot" component={Forgot} />
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="AddTask" component={AddTask} />
       </Stack.Navigator>

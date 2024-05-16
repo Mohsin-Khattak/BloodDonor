@@ -9,7 +9,7 @@ const  styles = StyleSheet.create({
     },
     contentContainerStyle:{
         padding:mvs(20),
-        paddingTop:mvs(100),
+        paddingTop:mvs(50),
     },
     button:{
         marginTop:mvs(100),

@@ -9,7 +9,7 @@ const  styles = StyleSheet.create({
     },
     contentContainerStyle:{
         padding:mvs(20),
-        paddingTop:mvs(50),
+        paddingTop:mvs(100),
     },
     button:{
         marginTop:mvs(100),
@@ -18,6 +18,12 @@ const  styles = StyleSheet.create({
         color:colors.primary,
         alignSelf:'center',
         marginTop:mvs(20)
-    }
+    },
+    logoIcon:{
+        alignSelf: 'center',
+        marginTop: mvs(50),
+        height: mvs(100),
+        width: mvs(100),
+      }
 });
 export default styles;
