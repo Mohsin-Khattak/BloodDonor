@@ -1,3 +1,5 @@
+import firestore, {firebase} from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 import {Alert} from 'react-native';
 import {
   createUserWithEmailAndPassword,
@@ -6,6 +8,12 @@ import {
   saveData,
   signInWithEmailAndPassword,
 } from '.';
+// import storageServices from '../storageServices/storage.services';
+// import toastServices from '../toastServices/toast.services';
+import auth from '@react-native-firebase/auth';
+import messaging from '@react-native-firebase/messaging';
+import moment from 'moment';
+
 import {COLLECTIONS, STORAGEKEYS} from '../../config/constants';
 import {setUserInfo} from '../../store/reducers/user-reducer';
 import {SERVICES} from '../../utils';
@@ -20,7 +28,7 @@ export const onLoginPress = (email, password, setLoading, props) => {
       const response = await getData('users', res?.user?.uid);
       SERVICES.setItem(STORAGEKEYS.userId, res?.user?.uid);
       dispatch(setUserInfo(response));
-      SERVICES.resetStack(props, 'Home');
+      SERVICES.resetStack(props, 'TabNavigator');
     } catch (error) {
       console.log('error in onLoginPress', error);
       Alert.alert('', SERVICES._returnError(error));
@@ -29,7 +37,14 @@ export const onLoginPress = (email, password, setLoading, props) => {
     }
   };
 };
-export const onSignupPress = (name, email, password, setLoading, props) => {
+export const onSignupPress = (
+  name,
+  email,
+  password,
+  role,
+  setLoading,
+  props,
+) => {
   return async dispatch => {
     try {
       setLoading(true);
@@ -39,11 +54,12 @@ export const onSignupPress = (name, email, password, setLoading, props) => {
         userId: res?.user?.uid,
         name: name,
         email: email,
+        role: role,
       };
       await saveData('users', res?.user?.uid, user);
       SERVICES.setItem(STORAGEKEYS.userId, res?.user?.uid);
       dispatch(setUserInfo(user));
-      SERVICES.resetStack(props, 'Home');
+      SERVICES.resetStack(props, 'TabNavigator');
     } catch (error) {
       console.log('error in onSignupPress', error);
       Alert.alert('', error);
@@ -99,7 +115,7 @@ export const onAddTaskPress = (task, props) => {
     }
   };
 };
-export const getUserData = userI => {
+export const getUserData = userId => {
   return async dispatch => {
     try {
       const res = await getData(COLLECTIONS.users, userId);
@@ -117,4 +133,240 @@ export const onDeleteTask = async docId => {
     console.log('error in onDeleteTask', error);
     Alert.alert('', error);
   }
+};
+
+///////////---------------//////////////
+
+//? ======================== firebase crud function are define below ========================
+const uploadImage = async (image, folderName = 'photos') => {
+  if (image == null) {
+    return null;
+  }
+  const uploadUri = image;
+  let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
+  const extension = filename.split('.').pop();
+  const name = filename.split('.').slice(0, -1).join('.');
+  filename = name + Date.now() + '.' + extension;
+  const storageRef = storage().ref(`${folderName}/${filename}`);
+  const task = storageRef.putFile(uploadUri);
+  task.on('state_changed', taskSnapshot => {
+    `${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`;
+  });
+
+  try {
+    await task;
+    const url = await storageRef.getDownloadURL();
+    return url;
+  } catch (e) {
+    return null;
+  }
+};
+
+//? ======================== upload product image to firebase receive image as paramter  ========================
+const uploadProductImage = async image => {
+  if (image == null) {
+    return null;
+  }
+  const uploadUri = image;
+  let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
+  const extension = filename.split('.').pop();
+  const name = filename.split('.').slice(0, -1).join('.');
+  filename = name + Date.now() + '.' + extension;
+  const storageRef = storage().ref(`product/${filename}`);
+  const task = storageRef.putFile(uploadUri);
+  task.on('state_changed', taskSnapshot => {
+    `${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`;
+  });
+
+  try {
+    await task;
+    const url = await storageRef.getDownloadURL();
+    return url;
+  } catch (e) {
+    return null;
+  }
+};
+
+//? ======================== auth side all function are define below ========================
+
+const getFCMToken = async id => {
+  const user = await firestore().collection('Users').doc(id).get();
+  let fcmToken = user.data().fcmToken;
+  return fcmToken;
+};
+
+const getUserInfo = async (token = null) => {
+  // let id = await storageServices.getKey('userId');
+  let id = await SERVICES.getItem(STORAGEKEYS.userId);
+  if (token) {
+    id = token;
+  }
+  const user = await firestore().collection('users').doc(id).get();
+  return user.data();
+};
+
+const createFCMToken = async () => {
+  const fcmToken = await messaging().getToken();
+  return fcmToken;
+};
+
+//?============================ messages functions are below ===========================
+// ? here we just create new id for conversation  concate sender and receiver id
+// ! paramater required sender id receiver id
+const createChatID = (myId, receiverId) => {
+  let id = [myId, receiverId].sort().join('_');
+  return 'chatRoom_' + id;
+};
+
+//?  here  i check the conversation if already exist then return that data else
+// ?  we call the function which create new collection and return us require data
+// ! paramater required sender id receiver id
+const checkMessagesCollection = async receiverId => {
+  // let myId = await storageServices.getKey('userId');
+  let myId = await SERVICES.getItem(STORAGEKEYS.userId);
+  let id = createChatID(myId, receiverId);
+  let obj = {};
+  let data = await firestore().collection('chat').doc(id).get();
+  if (data?.exists) {
+    obj = {
+      convoId: data.id,
+    };
+  } else {
+    obj = await createConversation({myId: myId, receiverId: receiverId});
+  }
+  return obj;
+};
+
+// ? here we we call the create id function and check the conversation with this id
+// ! paramater required  sender id and receiver id
+// ? and its return us an an object which contain conversation id
+const createConversation = async _obj => {
+  let obj = {};
+  let chatId = createChatID(_obj.myId, _obj.receiverId);
+  obj = {
+    convoId: chatId,
+  };
+  await firestore()
+    .collection('chat')
+    .doc(chatId)
+    .set({
+      chatContainIDs: [_obj.myId, _obj.receiverId],
+      lastMessage: '',
+      lastMessageTime: '',
+      unreadMessages: 0,
+    });
+  return obj;
+};
+
+// ? we user this function when we send an message
+// ! paramater required conversation id and message object like
+//!  obj = {
+//!   text: text,
+//!   created_at: timestamp,
+//!   _id:  receiver id ,
+//!   user: {
+//!     _id: sender Id,
+//!   },
+//! };
+const sendMessage = async (conversationID, mesageObject) => {
+  // let timestamp = firestore.FieldValue.serverTimestamp();
+  // let id = await storageServices.getKey('userId');
+  let id = await SERVICES.getItem(STORAGEKEYS.userId);
+  firestore()
+    .collection('chat')
+    .doc(conversationID)
+    .collection('messages')
+    .add(mesageObject);
+  await updateLastMesaage(
+    conversationID,
+    mesageObject.text ? mesageObject.text : 'photo',
+  );
+};
+
+// ? get user all conversation
+const getConversationList = async () => {
+  // let id = await storageServices.getKey('userId');
+  let id = await SERVICES.getItem(STORAGEKEYS.userId);
+  let list = [];
+  let myInfo = {};
+  let receiverInfo = {};
+  let receiverId = '';
+  let idsList = [];
+  let curUserinfo;
+  myInfo = await getUserInfo(id);
+  let querySnapshot = await firestore().collection('chat').get();
+  for (let index = 0; index < querySnapshot.docs.length; index++) {
+    let doc = querySnapshot.docs[index].data();
+    idsList = querySnapshot.docs[index].data().chatContainIDs;
+    if (idsList?.includes(id)) {
+      if (idsList[0] == id) {
+        curUserinfo = idsList[0];
+        receiverId = idsList[1];
+      } else {
+        curUserinfo = idsList[1];
+        receiverId = idsList[0];
+      }
+      receiverInfo = await getUserInfo(receiverId);
+      let obj = {
+        convoId: querySnapshot.docs[index].id,
+        myId: id,
+        recieverId: receiverId,
+        profilePicture: receiverInfo?.profilePicture,
+        lastMessage: doc.lastMessage,
+        name: receiverInfo?.name,
+        unread: doc.unreadMessages,
+        messageTime: doc.lastMessageTime,
+      };
+      list.push(obj);
+    }
+  }
+
+  return list;
+};
+
+// ? update conversation last message
+// ! paramater required conversation id and last message
+const updateLastMesaage = async (conversationID, msg) => {
+  firestore()
+    .collection('chat')
+    .doc(conversationID)
+    .update({
+      lastMessage: msg,
+      lastMessageTime: moment().format('YYYY-MM-DD:HH:mm:ss'),
+    });
+};
+
+// ? get all messages
+// ! paramater required  conversation id
+const GetMessages = async conversationId => {
+  let list = [];
+  let querySnapshot = await firestore()
+    .collection('chat')
+    .doc(conversationId)
+    .collection('messages')
+    .orderBy('createdAt', 'desc')
+    .get();
+  querySnapshot.docs.map(doc => {
+    list.push(doc.data());
+  });
+  list = list.sort((a, b) => {
+    return (
+      moment(b.createdAt).format('YYYYMMDDHHmmss') -
+      moment(a.createdAt).format('YYYYMMDDHHmmss')
+    );
+  });
+  return list.reverse();
+};
+export const appFBS = {
+  uploadImage,
+  getData,
+  getUserInfo,
+  getFCMToken,
+  createFCMToken,
+  uploadProductImage,
+  getConversationList,
+  sendMessage,
+  createConversation,
+  checkMessagesCollection,
+  GetMessages,
 };

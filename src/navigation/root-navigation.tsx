@@ -1,17 +1,17 @@
 // In App.js in a new project
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {Platform, StatusBar, StyleSheet, View} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {horizontalAnimation} from '../utils';
-import Splash from '../screens/splash';
-import RootStackParamList from '../types/navigation-types/root-stack';
-import Home from '../screens/home';
+import { Platform, StatusBar, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Forgot from 'screens/forgot';
 import AddTask from '../screens/add-task';
 import Login from '../screens/login';
 import Signup from '../screens/signup';
-import Forgot from 'screens/forgot';
+import Splash from '../screens/splash';
+import RootStackParamList from '../types/navigation-types/root-stack';
+import { horizontalAnimation } from '../utils';
+import TabNavigator from './tab-navigation';
+import { HospitalStack } from './hospital-navigation/hospital-stack';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export const RootNavigator = () => {
@@ -29,8 +29,11 @@ export const RootNavigator = () => {
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Signup" component={Signup} />
         <Stack.Screen name="Forgot" component={Forgot} />
-        <Stack.Screen name="Home" component={Home} />
+
         <Stack.Screen name="AddTask" component={AddTask} />
+        <Stack.Screen name="TabNavigator" component={TabNavigator} />
+        <Stack.Screen name="HospitalStack" component={HospitalStack} />
+
       </Stack.Navigator>
     </SafeAreaView>
   );

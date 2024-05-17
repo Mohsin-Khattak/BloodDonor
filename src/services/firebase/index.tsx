@@ -21,7 +21,7 @@ export const createUserWithEmailAndPassword = async (name:string,email:string,pa
     }else if (error.code === 'auth/invalid-email') {
       console.log('That email address is invalid!');
     }
-    throw SERVICES._returnError(error);
+    throw SERVICES.returnError(error);
   }
 }
 export const signInWithEmailAndPassword = async (email:string,password:string) => {
@@ -35,7 +35,7 @@ export const signInWithEmailAndPassword = async (email:string,password:string) =
     }else if (error.code === 'auth/invalid-email') {
       console.log('That email address is invalid!');
     }
-    throw SERVICES._returnError(error);
+    throw SERVICES.returnError(error);
   }
 }
 export const passwordResetWithEmail = (email:string) => {
@@ -107,7 +107,7 @@ export const deleteDocument = async (
     await ref.doc(docId).delete();
   } catch (error) {
     console.log('error::', error);
-    throw SERVICES?._returnError(error);
+    throw SERVICES?.returnError(error);
   }
 };
 export const isDocumentExists = async (
@@ -120,7 +120,7 @@ export const isDocumentExists = async (
     return documentSnapshot.exists;
   } catch (error) {
     console.log('error::', error);
-    throw SERVICES?._returnError(error);
+    throw SERVICES?.returnError(error);
   }
 };
 export const getData = async(collection: string, doc: string) => {
@@ -134,7 +134,7 @@ export const getData = async(collection: string, doc: string) => {
       } else {
         throw 'user does not exists';
       }
-    }).catch(error=>{throw SERVICES?._returnError(error)});
+    }).catch(error=>{throw SERVICES?.returnError(error)});
 };
 export const getDatabyKey = async (
   collection: string,
@@ -216,7 +216,7 @@ export const addToArray = async (
       });
     
   } catch (error) {
-    throw SERVICES._returnError(error)
+    throw SERVICES.returnError(error)
   }
 };
 export const removeFromArray = async (
@@ -232,7 +232,7 @@ export const removeFromArray = async (
       });
     
   } catch (error) {
-    throw SERVICES._returnError(error)
+    throw SERVICES.returnError(error)
   }
 };
 export const filterArrayCollections = async (
@@ -267,7 +267,7 @@ export const filterArrayCollections = async (
     // after all of the data is fetched, return it
     return Promise.all(batches).then(content => content);
   } catch (error) {
-    throw new Error(SERVICES._returnError(error));
+    throw new Error(SERVICES.returnError(error));
   }
 };
 export const filterCollections = async (
@@ -285,7 +285,7 @@ export const filterCollections = async (
     });
     return data;
   } catch (error) {
-    throw new Error(SERVICES._returnError(error));
+    throw new Error(SERVICES.returnError(error));
   }
 };
 
@@ -307,7 +307,7 @@ export async function insertBatch(collection :string, array: any[] = [], is_doc 
     return batch.commit();
   } catch (error) {
     console.log('error:', error);
-    throw new Error(SERVICES._returnError(error));
+    throw new Error(SERVICES.returnError(error));
   }
 }
 
@@ -330,6 +330,6 @@ export const onPostLike=(postId:string) =>{
       });
     });
   } catch (error) {
-    throw new Error(SERVICES._returnError(error));
+    throw new Error(SERVICES.returnError(error));
   }
 }

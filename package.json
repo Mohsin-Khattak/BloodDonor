@@ -19,6 +19,7 @@
     "@react-native-firebase/firestore": "^15.6.0",
     "@react-native-firebase/messaging": "^15.6.0",
     "@react-native-firebase/storage": "^15.6.0",
+    "@react-navigation/bottom-tabs": "^6.5.20",
     "@react-navigation/native": "^6.0.13",
     "@react-navigation/native-stack": "^6.9.0",
     "@react-navigation/stack": "^6.3.1",
@@ -30,6 +31,9 @@
     "react-i18next": "^11.18.6",
     "react-native": "0.70.4",
     "react-native-config": "^1.4.6",
+    "react-native-geocoding": "^0.5.0",
+    "react-native-geolocation-service": "^5.3.1",
+    "react-native-google-places-autocomplete": "^2.5.1",
     "react-native-image-crop-picker": "^0.38.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-reanimated": "^2.4.0",
@@ -37,13 +41,13 @@
     "react-native-screens": "^3.18.0",
     "react-native-svg": "^13.2.0",
     "react-native-uuid": "^2.0.1",
-    "react-redux": "^8.0.4",
     "react-native-vector-icons": "^10.0.0",
-    "react-native-google-places-autocomplete": "^2.5.1",
-    "react-native-geocoding": "^0.5.0",
-    "react-native-geolocation-service": "^5.3.1",
-    "redux-logger": "^3.0.6"
-
+    "react-redux": "^8.0.4",
+    "react-native-document-picker": "^9.0.1",
+    "redux-logger": "^3.0.6",
+    "react-native-maps": "^1.4.0",
+    "react-native-maps-directions": "^1.9.0"
+   
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
