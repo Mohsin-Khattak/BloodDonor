@@ -3,11 +3,15 @@ import { KeyboardTypeOptions, NativeSyntheticEvent, StyleProp, StyleSheet, TextI
 import { colors } from '../../../config/colors'
 import { mvs } from '../../../config/metrices'
 import Regular from '../../../typography/regular-text'
+import { Row } from '../row'
 type props = {
     onChangeText: (text:string) => void
     value: string
     label: string
     placeholder?: string
+    onPress?: () => void;
+    error?: string;
+    isPassword?: boolean;
     style?:StyleProp<ViewStyle>
     labelStyle?:StyleProp<ViewStyle>
     containerStyle?:StyleProp<ViewStyle>
@@ -19,6 +23,7 @@ type props = {
     const {
         onChangeText,
         value,
+        onPress,
         style,
         label,
         placeholder='type here',
@@ -26,6 +31,8 @@ type props = {
         containerStyle,
         secureTextEntry,
         keyboardType,
+        isPassword,
+        error,
         onBlur
 
     } = props;
@@ -36,6 +43,38 @@ type props = {
         </View>
     )
 };
+export const MessageInput = (props: props) => {
+    const {
+      onChangeText,
+      onPress = () => {},
+      value,
+      style,
+      placeholder = 'Write Message',
+      containerStyle,
+      isPassword,
+      keyboardType,
+      error,
+      onBlur = () => {},
+    } = props;
+    return (
+      <>
+        <Row style={[styles.messageContainer, containerStyle]}>
+          <TextInput
+            onBlur={onBlur}
+            keyboardType={keyboardType}
+            value={value}
+            placeholderTextColor={`${colors.black}50`}
+            onChangeText={onChangeText}
+            placeholder={placeholder}
+            style={[styles.textInput, style]}
+          />
+          {/* <TouchableOpacity style={styles.PasswordIcon} onPress={onPress}>
+            <Entypo size={20} name={'attachment'} color={colors.attachmentgray} />
+          </TouchableOpacity> */}
+        </Row>
+      </>
+    );
+  };
 
 export default React.memo(PrimaryInput)
 const styles = StyleSheet.create({
@@ -52,4 +91,15 @@ const styles = StyleSheet.create({
     labelStyle:{
         color:colors.primary,
     },
+    messageContainer: {
+        alignItems: 'flex-start',
+        paddingVertical: mvs(7),
+        borderRadius: mvs(10),
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingHorizontal: mvs(10),
+        backgroundColor: '#F6F6F6',
+        marginTop: mvs(5),
+        flex: 1,
+      },
 })

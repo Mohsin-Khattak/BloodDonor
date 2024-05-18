@@ -7,9 +7,10 @@ import React, { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { GeoPosition } from 'react-native-geolocation-service';
 import MapView, { LatLng, MapPressEvent, MapViewProps, Marker } from 'react-native-maps';
+import { setLocation } from 'store/reducers/user-reducer';
 
 import { LocationData } from 'types/entities-types';
-import { UTILS } from 'utils';
+import { SERVICES } from  '../../utils';
 
 
 interface CustomMapProps extends MapViewProps {
@@ -49,16 +50,16 @@ const CustomMap: React.FC<CustomMapProps> = ({ children,
   };
 
   const handleCurrentLocationPress = () => {
-    UTILS.get_current_location((position: GeoPosition) => {
+    SERVICES.get_current_location((position: GeoPosition) => {
       setCurrentLocation({ ...position.coords });
       handleRegionChange(position.coords);
 
-      UTILS._returnAddress(position.coords?.latitude, position.coords?.longitude).then((res) => {
+      SERVICES._returnAddress(position.coords?.latitude, position.coords?.longitude).then((res) => {
         if (updateCurrentLocation) {
           dispatch(setLocation(res))
         }
       });
-    }, (error) => {
+    }, (error:any) => {
       console.log('error=>>', error);
 
     });
@@ -80,7 +81,7 @@ const CustomMap: React.FC<CustomMapProps> = ({ children,
     e.persist();
     if (!enabledMarkLocation) return;
     setCurrentLocation(e.nativeEvent?.coordinate);
-    UTILS._returnAddress(e.nativeEvent?.coordinate?.latitude, e.nativeEvent?.coordinate?.longitude).then((res) => {
+    SERVICES._returnAddress(e.nativeEvent?.coordinate?.latitude, e.nativeEvent?.coordinate?.longitude).then((res) => {
       onPress(res);
     });
   }

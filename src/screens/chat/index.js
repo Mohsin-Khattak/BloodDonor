@@ -1,14 +1,13 @@
-import {View, Text} from 'react-native';
-import React from 'react';
-import styles from './styles';
 import CustomFlatList from 'components/atoms/custom-flatlist';
-import {mvs} from 'config/metrices';
-import ChatCard from 'components/atoms/molecules/chat-card';
 import {Loader} from 'components/atoms/loader';
+import ChatCard from 'components/atoms/molecules/chat-card';
+import {mvs} from 'config/metrices';
+import React from 'react';
+import {View} from 'react-native';
 import AppHeader from '../../components/atoms/headers/index';
-import Regular from 'typography/regular-text';
+import styles from './styles';
 
-const Chat = () => {
+const Chat = props => {
   // const isFocus = useIsFocused();
   // const {chat} = useAppSelector(s => s);
 
@@ -26,7 +25,7 @@ const Chat = () => {
   const renderItem = ({item}) => (
     <ChatCard
       item={item}
-      // onPress={() => navigate('InboxScreen', {info: item})}
+      onPress={() => props.navigation.navigate('Inbox', {info: item})}
     />
   );
   return (

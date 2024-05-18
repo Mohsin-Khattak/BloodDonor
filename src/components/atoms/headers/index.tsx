@@ -29,12 +29,12 @@ const AppHeader = ({
 export default React.memo(AppHeader);
 const styles = StyleSheet.create({
   container: {
-    height: mvs(60),
+    height: mvs(50),
     flexDirection: 'row',
     backgroundColor: colors.white,
     paddingHorizontal: mvs(22),
-    borderBottomLeftRadius: mvs(20),
-    borderBottomRightRadius: mvs(20),
+    // borderBottomLeftRadius: mvs(20),
+    // borderBottomRightRadius: mvs(20),
     alignItems: 'center',
     zIndex: 1001,
     ...colors.shadow
