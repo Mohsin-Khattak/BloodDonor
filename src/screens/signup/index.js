@@ -31,6 +31,7 @@ const Signup = props => {
     phone: '',
     city: '',
     address: '',
+    bloodGroup: '',
   };
   const {values, errors, touched, setFieldValue, setFieldTouched, isValid} =
     useFormik({
@@ -57,6 +58,7 @@ const Signup = props => {
           values?.phone,
           values?.city,
           values?.address,
+          values?.bloodGroup,
           setLoading,
           props,
         ),
@@ -161,6 +163,14 @@ const Signup = props => {
           onBlur={() => setFieldTouched('address', true)}
           value={values.address}
         />
+        {check === 'user' && (
+          <PrimaryInput
+            placeholder="A"
+            label={'Blood Group'}
+            onChangeText={str => setFieldValue('bloodGroup', str)}
+            value={values.bloodGroup}
+          />
+        )}
         {check === 'user' && (
           <>
             <Regular label={'Select Gender'} color={colors.primary} />

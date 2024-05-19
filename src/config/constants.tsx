@@ -1,5 +1,6 @@
 export const COLLECTIONS={
     users:'users',
+    chat:'chat',
     tasks:'tasks',
 }
 export const DATE_FORMAT = {
@@ -9,5 +10,5 @@ export const DATE_FORMAT = {
   };
 export const STORAGEKEYS={
     userId:'@userId',
-
+    role:'role',
 }

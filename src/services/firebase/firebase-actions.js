@@ -14,27 +14,34 @@ import {
 // import toastServices from '../toastServices/toast.services';
 import messaging from '@react-native-firebase/messaging';
 import moment from 'moment';
-
+import {store} from 'store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {COLLECTIONS, STORAGEKEYS} from '../../config/constants';
-import {reset, setUserInfo} from '../../store/reducers/user-reducer';
+import {setUserInfo} from '../../store/reducers/user-reducer';
+import {reset} from '../../store/reducers/user-reducer';
 import {SERVICES} from '../../utils';
 import {getData} from './index';
-
+import {userSlice} from '../../store/reducers/user-reducer';
 export const onLoginPress = (email, password, setLoading, props) => {
   return async dispatch => {
     try {
       setLoading(true);
       const res = await signInWithEmailAndPassword(email, password);
-      console.log('res of onLoginPress=>', res);
+
       const response = await getData('users', res?.user?.uid);
+
       SERVICES.setItem(STORAGEKEYS.userId, res?.user?.uid);
+      SERVICES.setItem(STORAGEKEYS.role, response?.role);
 
       dispatch(setUserInfo(response));
-      SERVICES.resetStack(props, 'TabNavigator');
+
+      SERVICES.resetStack(
+        props,
+        response?.role === 'user' ? 'TabNavigator' : 'HospitalStack',
+      );
     } catch (error) {
       console.log('error in onLoginPress', error);
-      Alert.alert('', SERVICES._returnError(error));
+      Alert.alert('', SERVICES.returnError(error));
     } finally {
       setLoading(false);
     }
@@ -49,13 +56,19 @@ export const onSignupPress = (
   phone,
   city,
   address,
+  bloodGroup,
   setLoading,
   props,
 ) => {
   return async dispatch => {
     try {
       setLoading(true);
-      const res = await createUserWithEmailAndPassword(name, email, password);
+      const res = await createUserWithEmailAndPassword(
+        name,
+        role,
+        email,
+        password,
+      );
       console.log('res of onSignupPress=>', res);
       const user = {
         userId: res?.user?.uid,
@@ -66,9 +79,12 @@ export const onSignupPress = (
         phone: phone,
         city: city,
         address: address,
+        bloodGroup: bloodGroup,
       };
       await saveData('users', res?.user?.uid, user);
+
       SERVICES.setItem(STORAGEKEYS.userId, res?.user?.uid);
+
       dispatch(setUserInfo(user));
       SERVICES.resetStack(
         props,
@@ -97,8 +113,10 @@ export const onLogoutPress = props => {
             try {
               await logout();
               SERVICES._removeEmptyKeys([STORAGEKEYS.userId]);
-              dispatch(reset());
+              // dispatch(userSlice.actions.reset());
+              store.dispatch(reset());
               await AsyncStorage.clear();
+
               SERVICES.resetStack('Login');
             } catch (error) {
               console.error('Logout error: ', error);
@@ -367,7 +385,7 @@ const getConversationList = async () => {
         convoId: querySnapshot.docs[index].id,
         myId: id,
         recieverId: receiverId,
-        profilePicture: receiverInfo?.profilePicture,
+        profilePicture: receiverInfo?.image,
         lastMessage: doc.lastMessage,
         name: receiverInfo?.name,
         unread: doc.unreadMessages,

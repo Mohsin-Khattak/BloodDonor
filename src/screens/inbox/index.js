@@ -1,116 +1,310 @@
-import CustomFlatList from 'components/atoms/custom-flatlist';
-import {MessageInput} from 'components/atoms/inputs';
-import {Loader} from 'components/atoms/loader';
-import InboxChatCard from 'components/atoms/molecules/inbox-chat-card';
-import {Row} from 'components/atoms/row';
-import {colors} from 'config/colors';
-import {mvs} from 'config/metrices';
-import {useAppDispatch, useAppSelector} from 'hooks/use-store';
-import React from 'react';
+import firestore from '@react-native-firebase/firestore';
+import moment from 'moment';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   I18nManager,
   Image,
-  KeyboardAvoidingView,
-  Platform,
+  LogBox,
+  SafeAreaView,
+  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import Feather from 'react-native-vector-icons/Feather';
+import {
+  Actions,
+  Bubble,
+  GiftedChat,
+  InputToolbar,
+  Send,
+} from 'react-native-gifted-chat';
+import {
+  responsiveFontSize,
+  responsiveHeight,
+  responsiveWidth,
+} from 'react-native-responsive-dimensions';
+import Icon from 'react-native-vector-icons/AntDesign';
+
+// import {commonServices} from '../../../../services/commonServices/commomServices';
+import {Row} from 'components/atoms/row';
+import {colors} from 'config/colors';
+import {mvs} from 'config/metrices';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import Bold from 'typography/bold-text';
+import {appFBS} from 'services/firebase/firebase-actions';
 import Regular from 'typography/regular-text';
 import styles from './styles';
-
+import Bold from 'typography/bold-text';
+import {SERVICES} from 'utils';
 const Inbox = props => {
-  const {info, conversation_id, receiver_name, receiver_email, receiver_image} =
-    props?.route?.params || {};
-  const user = useAppSelector(s => s?.user);
-  const userInfo = user?.userInfo;
-  const dispatch = useAppDispatch();
-  const data = [
-    {me: 'me', id: 1, message: 'ali', time: '12/35/2923'},
-    {me: 'me', id: 1, message: 'ali', time: '12/35/2923'},
-    {id: 1, message: 'ali', time: '12/35/2923'},
-  ];
+  const RBsheet = useRef();
+  let data = props.route.params.info;
 
-  const [messages, setMessages] = React.useState([]);
+  const [messages, setMessages] = useState([]);
+  const [loading, setloading] = useState(false);
+  useEffect(() => {
+    LogBox.ignoreAllLogs();
+    firestore()
+      .collection('chat')
+      .doc(data?.convoId)
+      .collection('messages')
+      .onSnapshot(onResult, onError);
+  }, []);
 
-  // const lastMesId = Math.max(...messages.map(item => item.id), 0);
-
-  const [message, setMessage] = React.useState('');
-  const [loading, setLoading] = React.useState(false);
-
-  // const getMessages = async () => {
-  //   try {
-  //     const result = await getChatMessages(
-  //       info?.id || conversation_id,
-  //       pageNumber,
-  //     );
-  //     const res = result?.data;
-  //     // console.log('res cehck-==', res);
-  //     // setMessages(res?.data || []);
-  //     setMessages(preMessages =>
-  //       pageNumber > 1
-  //         ? {
-  //             ...res,
-  //             data: preMessages?.data
-  //               ? [...preMessages?.data, ...res?.data]
-  //               : [...res?.data],
-  //           }
-  //         : res,
-  //     );
-  //     setLoading(false);
-  //   } catch (error) {
-  //     console.log('error', error);
-  //     Alert.alert('Error', UTILS.returnError(error));
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  // React.useEffect(() => {
-  //   //Implementing the setInterval method
-  //   const interval = setInterval(() => {
-  //     if (pageNumber > 0 && !pageLoading) {
-  //       getMessages(setPageLoading);
-  //     }
-  //   }, 5000);
-
-  //Clearing the interval
-  //   return () => clearInterval(interval);
-  // }, [pageNumber]);
-
-  const sendMessage = async () => {
-    //   try {
-    //     if (!message?.trim()) return;
-    //     await onSendMessage({
-    //       conversation_id: info?.id || conversation_id,
-    //       message: message,
-    //     });
-    //     await getMessages();
-    //     setMessage('');
-    //     // setMessages(res?.data || []);
-    //   } catch (error) {
-    //     console.log('error', error);
-    //     Alert.alert('Error', UTILS.returnError(error));
-    //   } finally {
-    //     setLoading(false);
-    //   }
+  async function onResult(QuerySnapshot) {
+    let changes = QuerySnapshot.docChanges();
+    changes.forEach(async element => {
+      await getMessages();
+    });
+  }
+  function onError(error) {
+    console.error(error);
+  }
+  const getMessages = async () => {
+    let list = await appFBS.GetMessages(data.convoId);
+    console.log('list chat==============>', list);
+    setMessages(list);
   };
-
-  const renderItem = item => (
-    <InboxChatCard
-      item={item}
-      //  item={{...item, me: userInfo?.id === item?.user_id}}
-    />
-  );
+  const selectPhoto = async () => {
+    // setloading(true);
+    let res = await SERVICES._returnImageGallery();
+    if (res) {
+      let img = await appFBS.uploadImage(res, 'chatImages');
+      await sendPhoto(img);
+    }
+    // setloading(false);
+  };
+  const customInputToolbar = props => {
+    return (
+      <InputToolbar
+        {...props}
+        primaryStyle={{
+          width: responsiveWidth(90),
+          backgroundColor: '#EBEBEB',
+          alignItems: 'center',
+          alignSelf: 'center',
+          borderRadius: responsiveWidth(2),
+          height: responsiveHeight(8),
+          paddingHorizontal: responsiveWidth(0.8),
+        }}
+        containerStyle={{
+          borderTopColor: 'transparent',
+        }}
+        accessoryStyle={
+          {
+            // backgroundColor: 'red',
+          }
+        }
+        textInputStyle={{
+          // backgroundColor: 'red',
+          borderRadius: responsiveWidth(2),
+          fontSize: responsiveFontSize(1.5),
+          paddingLeft: responsiveWidth(4),
+          width: responsiveWidth(55),
+          marginRight: responsiveWidth(3),
+          color: colors.black,
+        }}
+      />
+    );
+  };
+  const rendersend = props => {
+    return (
+      <Send
+        {...props}
+        containerStyle={{
+          height: responsiveWidth(10),
+          width: responsiveWidth(10),
+          backgroundColor: colors.primary,
+          borderRadius: responsiveWidth(10),
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginRight: responsiveWidth(1),
+        }}>
+        <Icon
+          name={'right'}
+          size={responsiveHeight(2.5)}
+          color={'#fff'}
+          type="ionicon"
+        />
+      </Send>
+    );
+  };
+  const renderMessageImage = props => {
+    return (
+      <View>
+        <Image
+          resizeMode="cover"
+          source={{uri: props?.currentMessage?.image}}
+          style={styles.imagestyl}></Image>
+      </View>
+    );
+  };
+  const renderAvatar = props => {
+    null;
+  };
+  function renderActions(props) {
+    return (
+      <>
+        <Actions
+          {...props}
+          onPressActionButton={() => selectPhoto()}
+          containerStyle={{
+            width: responsiveWidth(6),
+            height: responsiveHeight(6),
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginTop: responsiveHeight(1),
+            marginLeft: responsiveWidth(2),
+          }}
+          icon={() => (
+            // <TouchableOpacity onPress={() => selectPhoto()}>
+            <Icon
+              name={'right'}
+              size={responsiveHeight(2.5)}
+              color={'#fff'}
+              type="ionicon"
+            />
+            // </TouchableOpacity>
+          )}
+        />
+      </>
+    );
+  }
+  const renderBubble = props => {
+    return (
+      <View>
+        <Bubble
+          {...props}
+          containerStyle={{
+            left: {
+              borderBottomLeftRadius: responsiveWidth(1),
+              borderBottomRightRadius: responsiveWidth(1),
+              borderTopLeftRadius: responsiveWidth(1),
+              borderTopRightRadius: responsiveWidth(1),
+              marginTop: responsiveHeight(2),
+            },
+            right: {
+              borderBottomLeftRadius: responsiveWidth(1),
+              borderBottomRightRadius: responsiveWidth(1),
+              borderTopLeftRadius: responsiveWidth(1),
+              borderTopRightRadius: responsiveWidth(1),
+              marginTop: responsiveHeight(2),
+            },
+          }}
+          containerToNextStyle={{
+            left: {
+              borderBottomLeftRadius: responsiveWidth(1),
+              borderBottomRightRadius: responsiveWidth(1),
+              borderTopLeftRadius: responsiveWidth(1),
+              borderTopRightRadius: responsiveWidth(1),
+            },
+            right: {
+              borderBottomLeftRadius: responsiveWidth(1),
+              borderBottomRightRadius: responsiveWidth(1),
+              borderTopLeftRadius: responsiveWidth(1),
+              borderTopRightRadius: responsiveWidth(1),
+            },
+          }}
+          containerToPreviousStyle={{
+            left: {
+              borderBottomLeftRadius: responsiveWidth(1),
+              borderBottomRightRadius: responsiveWidth(1),
+              borderTopLeftRadius: responsiveWidth(1),
+              borderTopRightRadius: responsiveWidth(1),
+            },
+            right: {
+              borderBottomLeftRadius: responsiveWidth(1),
+              borderBottomRightRadius: responsiveWidth(1),
+              borderTopLeftRadius: responsiveWidth(1),
+              borderTopRightRadius: responsiveWidth(1),
+            },
+          }}
+          wrapperStyle={{
+            left: {
+              backgroundColor: '#ccc',
+              borderBottomLeftRadius: responsiveWidth(3),
+              borderBottomRightRadius: responsiveWidth(3),
+              borderTopLeftRadius: responsiveWidth(0),
+              borderTopRightRadius: responsiveWidth(3),
+            },
+            right: {
+              borderBottomLeftRadius: responsiveWidth(3),
+              borderBottomRightRadius: responsiveWidth(0),
+              borderTopLeftRadius: responsiveWidth(3),
+              borderTopRightRadius: responsiveWidth(3),
+              backgroundColor: colors.primary,
+            },
+          }}
+          textStyle={{
+            left: {
+              color: '#000',
+              // fontFamily: fontFamily.appTextRegular,
+              fontSize: responsiveFontSize(1.6),
+            },
+            right: {
+              color: '#fff',
+              // fontFamily: fontFamily.appTextRegular,
+              fontSize: responsiveFontSize(1.6),
+            },
+          }}
+          bottomContainerStyle={{
+            left: {
+              backgroundColor: 'f0f',
+            },
+            right: {
+              backgroundColor: 'fff',
+            },
+          }}
+          tickStyle={{}}
+          timeTextStyle={{
+            right: {color: '#595959'},
+            left: {color: '#595959'},
+          }}
+        />
+        {/* <Text style={styles.messageTime2}>{moment().format('LT')}</Text> */}
+        <Text
+          style={
+            props.currentMessage.user._id == data?.receiverId
+              ? styles.messageTime
+              : styles.messageTime2
+          }>
+          {moment(Date()).format('LT')}
+        </Text>
+      </View>
+    );
+  };
+  const sendPhoto = async image => {
+    let timestamp = firestore.FieldValue.serverTimestamp();
+    let obj = {
+      image: image,
+      createdAt: timestamp,
+      _id: moment().format('YYYYMMDDHHmmss'),
+      user: {
+        _id: data?.myId,
+      },
+    };
+    await appFBS.sendMessage(data?.convoId, obj);
+  };
+  const onSend = async messages => {
+    let timestamp = firestore.FieldValue.serverTimestamp();
+    const {_id, createdAt, text, user} = messages[0];
+    let obj = {
+      text: text,
+      createdAt: timestamp,
+      _id: moment().format('YYYYMMDDHHmmss'),
+      user: {
+        _id: data?.myId,
+      },
+    };
+    await appFBS.sendMessage(data?.convoId, obj);
+  };
+  // const onSend = useCallback((messages = []) => {
+  //   setMessages(previousMessages =>
+  //     GiftedChat.append(previousMessages, messages),
+  //   );
+  // }, []);
   return (
-    <KeyboardAvoidingView
-      style={{flex: 1}}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined} // Adjust behavior for iOS
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0} // Optionally adjust vertical offset for iOS
-    >
-      <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.subInnerContainer}>
+        {/* <AppHeader title="Home" /> */}
         <View
           style={{
             paddingHorizontal: mvs(20),
@@ -122,7 +316,7 @@ const Inbox = props => {
             }}>
             <TouchableOpacity onPress={() => props?.navigation.goBack()}>
               <FontAwesome5
-                name={I18nManager.isRTL ? 'arrow-right' : 'arrow-left'}
+                name={'arrow-left'}
                 size={mvs(20)}
                 color={colors.primary}
               />
@@ -142,44 +336,42 @@ const Inbox = props => {
               />
             </View>
             <View style={{paddingHorizontal: mvs(10), flex: 1}}>
-              <Bold label={info?.receiver_name || receiver_name} />
-              <Regular
-                numberOfLines={1}
-                // label={info?.receiver_email || receiver_email}
-                label={'mohsinkhattak095@gmail.com'}
-              />
+              <Bold numberOfLines={1} label={data?.name} />
             </View>
           </Row>
         </View>
-        {loading ? (
-          <Loader />
-        ) : (
-          <CustomFlatList
-            ListFooterComponent={<Loader />}
-            inverted
-            showsVerticalScrollIndicator={false}
-            data={data || []}
-            renderItem={renderItem}
-            contentContainerStyle={{
-              paddingBottom: mvs(20),
-              paddingHorizontal: mvs(20),
-            }}
-          />
-        )}
 
-        <Row
-          style={{
-            marginHorizontal: mvs(20),
-            alignItems: 'center',
-            paddingBottom: Platform.OS === 'ios' ? mvs(50) : mvs(10),
-          }}>
-          <MessageInput value={message} onChangeText={setMessage} />
-          <TouchableOpacity onPress={sendMessage} style={styles.sendIcon}>
-            <Feather name={'send'} size={25} color={colors.white} />
-          </TouchableOpacity>
-        </Row>
+        <GiftedChat
+          messages={messages}
+          onSend={msg => onSend(msg)}
+          user={{
+            _id: data?.myId,
+          }}
+          textInputStyle={{color: 'black'}}
+          renderActions={renderActions}
+          renderAvatar={renderAvatar}
+          showAvatarForEveryMessage={true}
+          scrollToBottom
+          alwaysShowSend
+          inverted={false}
+          multiline={false}
+          renderDay={() => {
+            return null;
+          }}
+          renderTime={() => {
+            return null;
+          }}
+          renderBubble={renderBubble}
+          renderInputToolbar={customInputToolbar}
+          renderMessageImage={renderMessageImage}
+          isTyping={false}
+          placeholder={'Type Message'}
+          renderSend={rendersend}
+          infiniteScroll={true}
+        />
       </View>
-    </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
+
 export default Inbox;

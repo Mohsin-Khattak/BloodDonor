@@ -33,6 +33,7 @@ export const userSlice = createSlice({
       state=initialState;
     },
     
+    
   },
 })
 // Action creators are generated for each case reducer function
@@ -44,6 +45,7 @@ export const {
   // demoAsync
  } = userSlice.actions
 
+ 
 // export const demoAsyncFun = (amount) => (dispatch) => {
 //   setTimeout(() => {
 //     dispatch(demoAsync(amount))

@@ -5,6 +5,7 @@ export const colors = {
   border: '#707070',
   black: '#000000',
   white: '#ffffff',
+  grey: '#707070',
   transparent: 'transparent',
   primary: '#BE0C12', //'#5586FF'
   secondary: '#F2F2F2', //'#F2F2F2',

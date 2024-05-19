@@ -11,7 +11,7 @@ export const logout =async ()=>{
   await auth().signOut();
 }
 
-export const createUserWithEmailAndPassword = async (name:string,email:string,password:string) => {
+export const createUserWithEmailAndPassword = async (name:string,role:string,email:string,password:string) => {
   try {
    const res= await auth().createUserWithEmailAndPassword(email, password);
    console.log('RES: SIGNUP',res);

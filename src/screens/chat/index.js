@@ -2,26 +2,43 @@ import CustomFlatList from 'components/atoms/custom-flatlist';
 import {Loader} from 'components/atoms/loader';
 import ChatCard from 'components/atoms/molecules/chat-card';
 import {mvs} from 'config/metrices';
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {View} from 'react-native';
 import AppHeader from '../../components/atoms/headers/index';
 import styles from './styles';
+import {appFBS} from 'services/firebase/firebase-actions';
+import firestore from '@react-native-firebase/firestore';
 
 const Chat = props => {
   // const isFocus = useIsFocused();
   // const {chat} = useAppSelector(s => s);
 
-  const [loading, setLoading] = React.useState(false);
-  const data = [
-    {id: 1, name: 'Mohsin'},
-    {id: 2, name: 'Ali'},
-    {id: 3, name: 'Aqib'},
-  ];
+  const [loading, setLoading] = React.useState(true);
 
   // React.useEffect(() => {
   //   if (isFocus) dispatch(getConversationsList(setLoading));
   // }, [isFocus]);
 
+  const [conversation, setConversation] = useState([]);
+
+  useEffect(() => {
+    firestore().collection('chat').onSnapshot(onChatResult);
+  }, []);
+  async function onChatResult(QuerySnapshot) {
+    await getChats();
+  }
+  const getChats = async () => {
+    try {
+      setLoading(true);
+      let list = [];
+      list = await appFBS.getConversationList();
+      setConversation(list);
+    } catch (error) {
+      console.log('Error in chatting', error);
+    } finally {
+      setLoading(false);
+    }
+  };
   const renderItem = ({item}) => (
     <ChatCard
       item={item}
@@ -37,7 +54,7 @@ const Chat = props => {
       ) : (
         <CustomFlatList
           showsVerticalScrollIndicator={false}
-          data={data}
+          data={conversation}
           renderItem={renderItem}
           contentContainerStyle={{
             paddingBottom: mvs(20),

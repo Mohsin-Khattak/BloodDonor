@@ -7,6 +7,7 @@ import {Platform, StatusBar, StyleSheet, View} from 'react-native';
 import {horizontalAnimation} from 'utils';
 import TabNavigator from './tab-navigation';
 import Inbox from 'screens/inbox';
+import DonorDetails from 'screens/admin/donor-details';
 const Stack = createNativeStackNavigator();
 
 export const HospitalStack = props => {
@@ -22,6 +23,7 @@ export const HospitalStack = props => {
         initialRouteName={inititalRoute || 'TabNavigator'}
         screenOptions={horizontalAnimation}>
         <Stack.Screen name="TabNavigator" component={TabNavigator} />
+        <Stack.Screen name="DonorDetails" component={DonorDetails} />
         <Stack.Screen name="Inbox" component={Inbox} />
       </Stack.Navigator>
     </View>

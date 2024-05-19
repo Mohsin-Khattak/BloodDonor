@@ -1,16 +1,14 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
 import { Image, View } from 'react-native';
-import RootStackParamList from '../../types/navigation-types/root-stack';
-import styles from './styles';
-type props = NativeStackScreenProps<RootStackParamList, 'Splash'>;
 import Config from 'react-native-config';
-import { useAppDispatch, useAppSelector } from './../../hooks/use-store';
-import Regular from '../../typography/regular-text';
-import { SERVICES } from '../../utils';
 import { STORAGEKEYS } from '../../config/constants';
 import { getUserData } from '../../services/firebase/firebase-actions';
+import RootStackParamList from '../../types/navigation-types/root-stack';
+import { SERVICES } from '../../utils';
+import { useAppDispatch, useAppSelector } from './../../hooks/use-store';
+import styles from './styles';
+type props = NativeStackScreenProps<RootStackParamList, 'Splash'>;
 // import { setLocation } from 'store/reducers/user-reducer';
 import { splash } from 'assets/images';
 import { mvs } from 'config/metrices';
@@ -19,17 +17,16 @@ import { setLocation } from 'store/reducers/user-reducer';
 
 
 const Splash = (props: props) => {
-
   const {navigation} =props;
   const dispatch =useAppDispatch();
 
-  const store =useAppSelector(s=>s);
+  const {userInfo} =useAppSelector(s=>s.user);
   console.log('Config::',Config.BASE_URL);
-  
+
   
   React.useEffect(() => {
     (async()=>{
-      let screen:'Login'|'HospitalStack' = 'Login';
+      let screen:'Login'|'TabNavigator'|'HospitalStack' = 'Login';
       SERVICES.get_current_location(
         position => {
           dispatch(
@@ -41,11 +38,20 @@ const Splash = (props: props) => {
         },
         error => {},
       );
+      let role = await SERVICES.getItem(STORAGEKEYS.role);
       SERVICES.getItem(STORAGEKEYS.userId).then((userId:any)=>{
-      console.log('user Id check',userId)
+      
         if(userId){
-           screen='HospitalStack';
-           dispatch(getUserData(userId));
+          if(role ==='user')
+          {
+            screen='TabNavigator';
+            dispatch(getUserData(userId));
+          }else
+          {
+
+            screen='HospitalStack';
+            dispatch(getUserData(userId));
+          }
         }
         setTimeout(() => {
           navigation?.replace(screen);
@@ -64,3 +70,23 @@ const Splash = (props: props) => {
   );
 };
 export default Splash;
+
+
+
+// const Loading = async () => {
+
+//   let userId = await storageServices.getKey('userId');
+//   setTimeout(async () => {
+
+//     if (userId) {
+//       if (userType == 'buyer') {
+//         navigation.replace('BuyerApp', {screen: 'App'});
+//       } else {
+//         navigation.replace('SellerApp', {screen: 'App'});
+//       }
+//     } else {
+//       navigation.replace('SellerApp', {screen: 'App'});
+//       // navigation.replace('Welcome');
+//     }
+//   }, 1500);
+// };

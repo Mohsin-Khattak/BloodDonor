@@ -9,6 +9,7 @@ import Chat from 'screens/chat';
 import Profile from 'screens/admin/profile';
 import Donors from 'screens/admin/donors';
 import {colors} from 'config/colors';
+import Location from 'screens/admin/location';
 
 const Tab = createBottomTabNavigator();
 const BottomTab = createNativeStackNavigator();
@@ -30,6 +31,19 @@ const TabNavigator = () => {
           headerShown: false,
           tabBarShowLabel: false,
         })}>
+        {/* <BottomTab.Screen
+          name="Location"
+          component={Location}
+          options={{
+            tabBarIcon: focused => (
+              <AntDesign
+                name="location"
+                size={25}
+                color={focused ? colors.primary : 'black'}
+              />
+            ),
+          }}
+        /> */}
         <BottomTab.Screen
           name="Home"
           component={Home}
