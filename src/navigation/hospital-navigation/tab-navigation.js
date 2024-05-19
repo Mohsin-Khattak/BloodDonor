@@ -44,7 +44,7 @@ const TabNavigator = () => {
           }}
         />
 
-        <BottomTab.Screen
+        {/* <BottomTab.Screen
           name="Donors"
           component={Donors}
           options={{
@@ -56,7 +56,7 @@ const TabNavigator = () => {
               />
             ),
           }}
-        />
+        /> */}
         <BottomTab.Screen
           name="Chat"
           component={Chat}

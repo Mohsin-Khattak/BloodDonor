@@ -12,6 +12,7 @@ type props = {
     onPress?: () => void;
     error?: string;
     isPassword?: boolean;
+    editable?:boolean;
     style?:StyleProp<ViewStyle>
     labelStyle?:StyleProp<ViewStyle>
     containerStyle?:StyleProp<ViewStyle>
@@ -31,6 +32,7 @@ type props = {
         containerStyle,
         secureTextEntry,
         keyboardType,
+        editable,
         isPassword,
         error,
         onBlur
@@ -39,7 +41,7 @@ type props = {
     return (
         <View style={[styles.Container,containerStyle]}>
             <Regular style={[styles.labelStyle,labelStyle]} label={label}/>
-            <TextInput onBlur={onBlur} keyboardType={keyboardType} secureTextEntry={secureTextEntry}  value={value} placeholder={placeholder} onChangeText={onChangeText} style={[styles.textInput,style]}/>
+            <TextInput editable={editable} onBlur={onBlur} keyboardType={keyboardType} secureTextEntry={secureTextEntry}  value={value} placeholder={placeholder} onChangeText={onChangeText} style={[styles.textInput,style]}/>
         </View>
     )
 };

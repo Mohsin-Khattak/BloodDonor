@@ -16,6 +16,7 @@ import {NavigationProps} from '../types/navigation-types';
 import Geocoder from 'react-native-geocoding';
 
 import DocumentPicker from 'react-native-document-picker';
+import { uploadFile } from 'services/firebase';
 
 const getErrorList = (data: any) => {
   const {message, errors} = data;
@@ -447,6 +448,15 @@ export const SERVICES = {
       throw new Error(error);
     }
   },
+  
   getMinutesDiff: (a: string, b: string) => moment(b).diff(a, 'm'),
   getUUID: () => uuid?.v4()?.toString(),
+};
+export const uploadImageFile = async (image:any) => {
+  try {
+    const uri = await uploadFile(image);
+    return uri;
+  } catch (error) {
+    Alert.alert('', SERVICES.returnError(error));
+  }
 };

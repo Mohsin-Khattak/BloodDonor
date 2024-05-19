@@ -29,7 +29,7 @@ const Splash = (props: props) => {
   
   React.useEffect(() => {
     (async()=>{
-      let screen:'Login'|'TabNavigator' = 'Login';
+      let screen:'Login'|'HospitalStack' = 'Login';
       SERVICES.get_current_location(
         position => {
           dispatch(
@@ -42,9 +42,9 @@ const Splash = (props: props) => {
         error => {},
       );
       SERVICES.getItem(STORAGEKEYS.userId).then((userId:any)=>{
-      
+      console.log('user Id check',userId)
         if(userId){
-           screen='TabNavigator';
+           screen='HospitalStack';
            dispatch(getUserData(userId));
         }
         setTimeout(() => {

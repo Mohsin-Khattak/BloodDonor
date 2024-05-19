@@ -1,21 +1,23 @@
-import firestore, {firebase} from '@react-native-firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import {Alert} from 'react-native';
 import {
   createUserWithEmailAndPassword,
   deleteDocument,
+  getCurrentUserId,
+  logout,
   passwordResetWithEmail,
   saveData,
   signInWithEmailAndPassword,
 } from '.';
 // import storageServices from '../storageServices/storage.services';
 // import toastServices from '../toastServices/toast.services';
-import auth from '@react-native-firebase/auth';
 import messaging from '@react-native-firebase/messaging';
 import moment from 'moment';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {COLLECTIONS, STORAGEKEYS} from '../../config/constants';
-import {setUserInfo} from '../../store/reducers/user-reducer';
+import {reset, setUserInfo} from '../../store/reducers/user-reducer';
 import {SERVICES} from '../../utils';
 import {getData} from './index';
 
@@ -27,6 +29,7 @@ export const onLoginPress = (email, password, setLoading, props) => {
       console.log('res of onLoginPress=>', res);
       const response = await getData('users', res?.user?.uid);
       SERVICES.setItem(STORAGEKEYS.userId, res?.user?.uid);
+
       dispatch(setUserInfo(response));
       SERVICES.resetStack(props, 'TabNavigator');
     } catch (error) {
@@ -42,6 +45,10 @@ export const onSignupPress = (
   email,
   password,
   role,
+  gender,
+  phone,
+  city,
+  address,
   setLoading,
   props,
 ) => {
@@ -55,11 +62,18 @@ export const onSignupPress = (
         name: name,
         email: email,
         role: role,
+        gender: gender,
+        phone: phone,
+        city: city,
+        address: address,
       };
       await saveData('users', res?.user?.uid, user);
       SERVICES.setItem(STORAGEKEYS.userId, res?.user?.uid);
       dispatch(setUserInfo(user));
-      SERVICES.resetStack(props, 'TabNavigator');
+      SERVICES.resetStack(
+        props,
+        role === 'user' ? 'TabNavigator' : 'HospitalStack',
+      );
     } catch (error) {
       console.log('error in onSignupPress', error);
       Alert.alert('', error);
@@ -68,21 +82,36 @@ export const onSignupPress = (
     }
   };
 };
-// export const handlePasswordReset = async (email, setLoading, props) => {
-//   try {
-//     setLoading(true);
-//     const res = await passwordResetWithEmail(email);
-//     console.log('Passwor reset email sent successfully =>', res);
-
-//     // Assuming SERVICES.navigation is a function that navigates to the Login screen
-//     SERVICES.navigation(props, 'Login');
-//   } catch (error) {
-//     console.error('Error in handlePasswordReset', error);
-//     Alert.alert('Error', error.message || 'An error occurred');
-//   } finally {
-//     setLoading(false);
-//   }
-// };
+export const onLogoutPress = props => {
+  return async dispatch => {
+    try {
+      Alert.alert('Logout', 'Are you sure to logout ?', [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: async () => {
+            try {
+              await logout();
+              SERVICES._removeEmptyKeys([STORAGEKEYS.userId]);
+              dispatch(reset());
+              await AsyncStorage.clear();
+              SERVICES.resetStack('Login');
+            } catch (error) {
+              console.error('Logout error: ', error);
+            }
+          },
+        },
+      ]);
+    } catch (error) {
+      console.log('error  ', error);
+      showToast(error.message);
+    }
+  };
+};
 export const handlePasswordReset = async (email, setLoading, props) => {
   try {
     setLoading(true);
@@ -115,6 +144,33 @@ export const onAddTaskPress = (task, props) => {
     }
   };
 };
+
+export const onUpdateProfile = (values, setLoading, props) => {
+  return async (dispatch, getState) => {
+    try {
+      setLoading(true);
+      const uid = getCurrentUserId();
+      // console.log('user id check====>', uid);
+      const user = {
+        name: values?.name,
+        email: values?.email,
+        address: values?.address,
+        phone: values?.phone,
+        image: values?.image,
+        bloodGroup: values?.bloodGroup,
+        city: values?.city,
+      };
+      await saveData(COLLECTIONS.users, uid, user);
+      dispatch(setUserInfo(user));
+    } catch (error) {
+      console.log('error in onPostProfileImagePress', error);
+      // Alert.alert('', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+};
+
 export const getUserData = userId => {
   return async dispatch => {
     try {

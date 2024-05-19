@@ -12,12 +12,20 @@ const  styles = StyleSheet.create({
         paddingTop:mvs(50),
     },
     button:{
-        marginTop:mvs(100),
+        marginTop:mvs(50),
     },
     accountText:{
         color:colors.primary,
         alignSelf:'center',
         marginTop:mvs(20)
+    },
+    genderContainerBtn:{
+        width:'30%',
+        height:mvs(35),
+        borderRadius:mvs(5),
+        borderWidth:mvs(1),
+        borderColor:colors.primary
     }
+
 });
 export default styles;

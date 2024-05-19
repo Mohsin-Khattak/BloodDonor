@@ -20,7 +20,7 @@ const AppHeader = ({
   return (
     <View style={[styles.container, style]}>
       {back && <TouchableOpacity style={styles.back} onPress={()=>navigation?.goBack()}>
-        <Bold fontSize={mvs(20)} label={'<-'} />
+        <Bold color={colors.primary} fontSize={mvs(20)} label={'<-'} />
       </TouchableOpacity>}
       <Bold style={[styles.title]} label={title} />
     </View>

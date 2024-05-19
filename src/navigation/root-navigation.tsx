@@ -14,6 +14,7 @@ import TabNavigator from './tab-navigation';
 import { HospitalStack } from './hospital-navigation/hospital-stack';
 import Inbox from 'screens/inbox';
 import HospitalDetails from 'screens/user/hospital-details';
+import EditProfile from 'screens/user/edit-profile';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export const RootNavigator = () => {
@@ -31,11 +32,10 @@ export const RootNavigator = () => {
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Signup" component={Signup} />
         <Stack.Screen name="Forgot" component={Forgot} />
-
         <Stack.Screen name="AddTask" component={AddTask} />
         <Stack.Screen name="Inbox" component={Inbox} />
+        <Stack.Screen name="EditProfile" component={EditProfile} />
         <Stack.Screen name="HospitalDetails" component={HospitalDetails} />
-
         <Stack.Screen name="TabNavigator" component={TabNavigator} />
         <Stack.Screen name="HospitalStack" component={HospitalStack} />
 

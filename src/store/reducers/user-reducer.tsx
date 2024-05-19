@@ -29,12 +29,18 @@ export const userSlice = createSlice({
     setLocation: (state, action) => {
       state.location = action.payload;
     },
+    reset: (state,action)=>{
+      state=initialState;
+    },
+    
   },
 })
 // Action creators are generated for each case reducer function
 export const { 
   setUserInfo,
-  setLocation
+  setLocation,
+  reset,
+  
   // demoAsync
  } = userSlice.actions
 

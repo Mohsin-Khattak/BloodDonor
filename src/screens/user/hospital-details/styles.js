@@ -10,5 +10,10 @@ const styles = StyleSheet.create({
   mapContainer: {
     height: mvs(450),
   },
+  btnContainer: {
+    width: '45%',
+    height: mvs(40),
+    borderRadius: mvs(5),
+  },
 });
 export default styles;
