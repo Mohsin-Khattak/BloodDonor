@@ -52,7 +52,7 @@ const Profile = props => {
           <Entypo name={'location'} size={mvs(25)} color={colors.primary} />
           <Regular
             style={{marginLeft: mvs(10), color: colors.primary}}
-            label={userInfo?.address || 'N/A'}
+            label={userInfo?.address?.address || 'N/A'}
           />
         </Row>
         <Row style={styles.inputContainer}>

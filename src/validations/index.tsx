@@ -36,9 +36,9 @@ export const signupFormValidation = (values: any) => {
       errorList.email = 'Email is not valid';
     }
     
-    if (!values.address) {
-      errorList.address = 'Address is required';
-    }
+    // if (!values.address) {
+    //   errorList.address = 'Address is required';
+    // }
     
     if (!values.phone) {
       errorList.phone = 'Phone number is required';

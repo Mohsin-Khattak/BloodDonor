@@ -52,14 +52,17 @@ const GoogleSearchBar = ({
           textInputContainer: {
             backgroundColor: null,
             height: mvs(51),
-            borderWidth: 1,
+            borderBottomWidth: 1,
             borderColor: colors.gray,
             ...textInputContainer,
-            borderRadius: mvs(10),
+            borderRadius: mvs(0),
+            width:'100%',
+       
           },
           textInput: {
             backgroundColor: null,
             height: '100%',
+            width:'100%',
             paddingLeft: 0,
             paddingRight: mvs(30),
             color: colors.black,
@@ -126,10 +129,11 @@ const styles = StyleSheet.create({
   mainContainer: {
     // flex: 1,
     width: width - mvs(40),
+    // width:'100%',
     backgroundColor: colors.transparent,
     alignSelf: 'center',
     borderRadius: mvs(10),
-    paddingHorizontal: mvs(20),
+    paddingHorizontal: mvs(0),
     flexDirection: 'row',
     minHeight: mvs(38),
     marginBottom: mvs(20),

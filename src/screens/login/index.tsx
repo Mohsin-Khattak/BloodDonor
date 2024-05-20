@@ -12,13 +12,32 @@ import Medium from '../../typography/medium-text';
 import {useAppDispatch, useAppSelector} from '../../hooks/use-store';
 import { logo } from 'assets/images';
 import { mvs } from 'config/metrices';
+import { SERVICES } from '../../utils';
+import Geocoder from 'react-native-geocoding';
 type props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 const Login = (props: props) => {
+  Geocoder.init('AIzaSyDGDrN2RHbsqaNEuO0mCN3-MaqtzHgFgmA');
+
   const {navigation} = props;
   const dispatch = useAppDispatch();
   const [loading,setLoading]=React.useState(false)
   const state = useAppSelector(s => s?.user);
+  // const [currentLocation, setCurrentLocation] = React.useState();
+  // const [fullAddress, setFullAddress] = React.useState();
+  // console.log('full address check====>', fullAddress);
+
+  // React.useEffect(() => {
+  //   (async () => {
+  //     SERVICES.get_current_location(position => {
+  //       const {latitude, longitude} = position.coords;
+  //       setCurrentLocation({latitude, longitude});
+  //       SERVICES._returnAddress(latitude, longitude).then(res => {
+  //         setFullAddress(res);
+  //       });
+  //     });
+  //   })();
+  // }, []);
 
   const [values, setValues] = React.useState({
     email: '',

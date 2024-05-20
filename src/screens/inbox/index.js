@@ -2,7 +2,6 @@ import firestore from '@react-native-firebase/firestore';
 import moment from 'moment';
 import React, {useEffect, useRef, useState} from 'react';
 import {
-  I18nManager,
   Image,
   LogBox,
   SafeAreaView,
@@ -30,13 +29,11 @@ import {colors} from 'config/colors';
 import {mvs} from 'config/metrices';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {appFBS} from 'services/firebase/firebase-actions';
-import Regular from 'typography/regular-text';
-import styles from './styles';
 import Bold from 'typography/bold-text';
 import {SERVICES} from 'utils';
+import styles from './styles';
 const Inbox = props => {
-  const RBsheet = useRef();
-  let data = props.route.params.info;
+  let data = props.route.params.data;
 
   const [messages, setMessages] = useState([]);
   const [loading, setloading] = useState(false);

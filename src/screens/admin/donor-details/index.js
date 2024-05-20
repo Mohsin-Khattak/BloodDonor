@@ -14,20 +14,18 @@ import {PrimaryButton} from 'components/atoms/buttons';
 import {SERVICES} from 'utils';
 import {appFBS} from 'services/firebase/firebase-actions';
 import {getCurrentUserId} from 'services/firebase';
+import {useAppSelector} from 'hooks/use-store';
 
 const DonorDetails = props => {
+  const {location} = useAppSelector(s => s.user);
   const userInfo = props?.route?.params?.info;
-  console.log('params data check===>', userInfo);
+  console.log('userinfo check====>', userInfo);
+
   const navUserToChat = async () => {
     // setLoading(true);
-
     const id = getCurrentUserId();
-
     // let receiverInfo = await appFBS.getUserInfo(data?.addedBy);
-
     let res = await appFBS.checkMessagesCollection(userInfo?.userId);
-    console.log('========>', res);
-
     let obj = {
       convoId: res.convoId,
 
@@ -70,7 +68,7 @@ const DonorDetails = props => {
           />
           <Regular
             style={{marginLeft: mvs(20), flex: 1}}
-            label={`${userInfo?.city} ${userInfo?.address} ` || 'N/A'}
+            label={`${userInfo?.address?.address} ` || 'N/A'}
             fontSize={mvs(14)}
             color={colors.primary}
           />

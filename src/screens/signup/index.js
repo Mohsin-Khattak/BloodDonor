@@ -12,14 +12,17 @@ import {PrimaryButton} from '../../components/atoms/buttons';
 import AppHeader from '../../components/atoms/headers/index';
 import PrimaryInput from '../../components/atoms/inputs';
 import {KeyboardAvoidScrollview} from '../../components/atoms/keyboard-avoid-scrollview';
-import {useAppDispatch} from '../../hooks/use-store';
+import {useAppDispatch, useAppSelector} from '../../hooks/use-store';
 import {onSignupPress} from '../../services/firebase/firebase-actions';
 import Medium from '../../typography/medium-text';
 import styles from './styles';
+import GoogleSearchBar from 'components/google-auto-place';
+import {SERVICES} from '../../utils';
+import Geocoder from 'react-native-geocoding';
 
 const Signup = props => {
-  const {navigation} = props;
   const dispatch = useAppDispatch();
+
   const [loading, setLoading] = React.useState(false);
   const [check, setCheck] = React.useState('admin');
   const [selectGender, setSelectGender] = React.useState('male');
@@ -29,8 +32,8 @@ const Signup = props => {
     email: '',
     password: '',
     phone: '',
-    city: '',
     address: '',
+    city: '',
     bloodGroup: '',
   };
   const {values, errors, touched, setFieldValue, setFieldTouched, isValid} =
@@ -56,9 +59,9 @@ const Signup = props => {
           (role = check),
           (gender = selectGender),
           values?.phone,
-          values?.city,
           values?.address,
           values?.bloodGroup,
+          values?.city,
           setLoading,
           props,
         ),
@@ -67,7 +70,16 @@ const Signup = props => {
       console.log('Error on Signup====>', error);
     }
   };
-
+  const handleAddress = (data, details) => {
+    // Extract latitude and longitude from details.geometry.location
+    const {lat, lng} = details.geometry.location;
+    // Determine whether this is for pickup or dropoff
+    setFieldValue('address', {
+      latitudeDrop: lat,
+      longitudeDrop: lng,
+      address: details.formatted_address,
+    });
+  };
   return (
     <View style={styles.container}>
       <AppHeader back title="Sign-up" />
@@ -141,6 +153,7 @@ const Signup = props => {
           onBlur={() => setFieldTouched('password', true)}
           value={values.password}
         />
+
         <PrimaryInput
           placeholder={'03448422399'}
           keyboardType={'numeric'}
@@ -156,13 +169,17 @@ const Signup = props => {
           onBlur={() => setFieldTouched('city', true)}
           value={values.city}
         />
-        <PrimaryInput
+        <GoogleSearchBar
+          onPress={handleAddress}
+          placeholder={'Search  Address '}
+        />
+        {/* <PrimaryInput
           placeholder={'abc'}
           label={'Address'}
           onChangeText={str => setFieldValue('address', str)}
           onBlur={() => setFieldTouched('address', true)}
           value={values.address}
-        />
+        /> */}
         {check === 'user' && (
           <PrimaryInput
             placeholder="A"

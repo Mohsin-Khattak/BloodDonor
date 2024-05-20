@@ -1,25 +1,24 @@
-import {PrimaryButton} from 'components/atoms/buttons';
-import {Row} from 'components/atoms/row';
+import {View, Text, Image} from 'react-native';
+import React from 'react';
+import styles from './styles';
+import AppHeader from '../../../components/atoms/headers/index';
+import Regular from 'typography/regular-text';
 import {colors} from 'config/colors';
 import {mvs} from 'config/metrices';
-import {useAppSelector} from 'hooks/use-store';
-import React from 'react';
-import {Image, View} from 'react-native';
+import Medium from 'typography/medium-text';
+import {Row} from 'components/atoms/row';
+import Fontisto from 'react-native-vector-icons/Fontisto';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
-import Fontisto from 'react-native-vector-icons/Fontisto';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {useDispatch} from 'react-redux';
+import {PrimaryButton} from 'components/atoms/buttons';
 import {onLogoutPress} from 'services/firebase/firebase-actions';
-import Medium from 'typography/medium-text';
-import Regular from 'typography/regular-text';
-import AppHeader from '../../../components/atoms/headers/index';
-import styles from './styles';
+import {useAppDispatch, useAppSelector} from 'hooks/use-store';
 
 const Profile = props => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const {userInfo} = useAppSelector(s => s.user);
-
+  console.log('userProfile check====>', userInfo);
   return (
     <View style={styles.container}>
       <AppHeader title="Profile" />
@@ -52,7 +51,7 @@ const Profile = props => {
           <Entypo name={'location'} size={mvs(25)} color={colors.primary} />
           <Regular
             style={{marginLeft: mvs(10), color: colors.primary}}
-            label={userInfo?.address || 'N/A'}
+            label={userInfo?.address?.address || 'N/A'}
           />
         </Row>
         <Row style={styles.inputContainer}>

@@ -25,7 +25,6 @@ const Home = props => {
         '==',
         'user',
       );
-      console.log('user data check====>', res);
 
       setData(res);
     } catch (error) {

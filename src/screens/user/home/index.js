@@ -1,24 +1,52 @@
 import {Loader} from 'components/atoms/loader';
 import HospitalsCard from 'components/atoms/molecules/hospitals-card';
 import {mvs} from 'config/metrices';
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {FlatList, View} from 'react-native';
 import AppHeader from '../../../components/atoms/headers/index';
 import styles from './styles';
+import {filterCollections} from 'services/firebase';
+import {COLLECTIONS} from 'config/constants';
+import {SearchInput} from 'components/atoms/inputs';
 
 const Home = props => {
-  // const isFocus = useIsFocused();
-  // const {chat} = useAppSelector(s => s);
-
   const [loading, setLoading] = React.useState(false);
-  const data = [
-    {id: 1, name: 'Mohsin'},
-    {id: 2, name: 'Ali'},
-    {id: 3, name: 'Aqib'},
-    {id: 4, name: 'Aqib'},
-    {id: 5, name: 'Aqib'},
-  ];
+  const [data, setData] = React.useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const getData = async () => {
+    try {
+      setLoading(true);
+      const res = await filterCollections(
+        COLLECTIONS?.users,
+        'role',
+        '==',
+        'admin',
+      );
+      console.log('user data check====>', res);
 
+      setData(res);
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    getData();
+  }, []);
+  const filterData = () => {
+    if (!searchQuery) {
+      return data;
+    }
+    return data.filter(item => {
+      const nameMatch = item.name
+        ?.toLowerCase()
+        .includes(searchQuery.toLowerCase());
+      const cityMatch = item.city
+        ?.toLowerCase()
+        .includes(searchQuery.toLowerCase());
+      return nameMatch || cityMatch;
+    });
+  };
   const renderItem = item => (
     <HospitalsCard
       item={item}
@@ -28,14 +56,19 @@ const Home = props => {
   return (
     <View style={styles.container}>
       <AppHeader title="Home" />
+      <SearchInput
+        containerStyle={{marginHorizontal: mvs(20), marginVertical: mvs(10)}}
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+        placeholder="Search by Hospital Name or City"
+      />
 
       {loading ? (
         <Loader />
       ) : (
         <FlatList
           showsVerticalScrollIndicator={false}
-          data={data}
-          keyExtractor={item => item.id.toString()}
+          data={filterData()}
           renderItem={renderItem}
           contentContainerStyle={{
             paddingBottom: mvs(60),

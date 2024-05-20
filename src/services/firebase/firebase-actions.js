@@ -17,11 +17,12 @@ import moment from 'moment';
 import {store} from 'store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {COLLECTIONS, STORAGEKEYS} from '../../config/constants';
-import {setUserInfo} from '../../store/reducers/user-reducer';
+import {resetUser, setUserInfo} from '../../store/reducers/user-reducer';
 import {reset} from '../../store/reducers/user-reducer';
 import {SERVICES} from '../../utils';
 import {getData} from './index';
 import {userSlice} from '../../store/reducers/user-reducer';
+import {resetStack} from 'navigation/navigation-ref';
 export const onLoginPress = (email, password, setLoading, props) => {
   return async dispatch => {
     try {
@@ -29,15 +30,15 @@ export const onLoginPress = (email, password, setLoading, props) => {
       const res = await signInWithEmailAndPassword(email, password);
 
       const response = await getData('users', res?.user?.uid);
-
+      console.log('res of onLoginPress=>', response);
       SERVICES.setItem(STORAGEKEYS.userId, res?.user?.uid);
       SERVICES.setItem(STORAGEKEYS.role, response?.role);
 
       dispatch(setUserInfo(response));
-
+      // SERVICES.resetStack(props, 'HospitalStack');
       SERVICES.resetStack(
         props,
-        response?.role === 'user' ? 'TabNavigator' : 'HospitalStack',
+        response?.role == 'user' ? 'TabNavigator' : 'HospitalStack',
       );
     } catch (error) {
       console.log('error in onLoginPress', error);
@@ -54,9 +55,9 @@ export const onSignupPress = (
   role,
   gender,
   phone,
-  city,
   address,
   bloodGroup,
+  city,
   setLoading,
   props,
 ) => {
@@ -77,19 +78,20 @@ export const onSignupPress = (
         role: role,
         gender: gender,
         phone: phone,
-        city: city,
         address: address,
         bloodGroup: bloodGroup,
+        city: city,
       };
       await saveData('users', res?.user?.uid, user);
 
       SERVICES.setItem(STORAGEKEYS.userId, res?.user?.uid);
 
       dispatch(setUserInfo(user));
-      SERVICES.resetStack(
-        props,
-        role === 'user' ? 'TabNavigator' : 'HospitalStack',
+      // SERVICES.resetStack(
+      props.navigation.navigate(
+        role == 'user' ? 'TabNavigator' : 'HospitalStack',
       );
+      // );
     } catch (error) {
       console.log('error in onSignupPress', error);
       Alert.alert('', error);
@@ -98,6 +100,7 @@ export const onSignupPress = (
     }
   };
 };
+
 export const onLogoutPress = props => {
   return async dispatch => {
     try {
@@ -109,24 +112,29 @@ export const onLogoutPress = props => {
         },
         {
           text: 'OK',
-          onPress: async () => {
+          _onPress: async () => {
             try {
               await logout();
               SERVICES._removeEmptyKeys([STORAGEKEYS.userId]);
-              // dispatch(userSlice.actions.reset());
-              store.dispatch(reset());
+              dispatch(userSlice.actions.reset());
+              store.dispatch(reset(null));
               await AsyncStorage.clear();
-
-              SERVICES.resetStack('Login');
+              // SERVICES.resetStack('Login');
+              props.navigation.navigate('Login');
             } catch (error) {
               console.error('Logout error: ', error);
             }
+          },
+          get onPress() {
+            return this._onPress;
+          },
+          set onPress(value) {
+            this._onPress = value;
           },
         },
       ]);
     } catch (error) {
       console.log('error  ', error);
-      showToast(error.message);
     }
   };
 };
@@ -177,6 +185,7 @@ export const onUpdateProfile = (values, setLoading, props) => {
         image: values?.image,
         bloodGroup: values?.bloodGroup,
         city: values?.city,
+        role: values?.role,
       };
       await saveData(COLLECTIONS.users, uid, user);
       dispatch(setUserInfo(user));

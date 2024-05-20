@@ -23,15 +23,19 @@ export const userSlice = createSlice({
     setUserInfo: (state, action) => {
       state.userInfo = action.payload
     },
-    demoAsync: (state, action) => {
-      state.userInfo = action.payload
-    },
+    // demoAsync: (state, action) => {
+    //   state.userInfo = action.payload
+    // },
     setLocation: (state, action) => {
       state.location = action.payload;
     },
     reset: (state,action)=>{
-      state=initialState;
+      return initialState;
     },
+    resetUser: (state, action) => {
+      return initialState;
+    }
+
     
     
   },
@@ -41,7 +45,7 @@ export const {
   setUserInfo,
   setLocation,
   reset,
-  
+  resetUser
   // demoAsync
  } = userSlice.actions
 

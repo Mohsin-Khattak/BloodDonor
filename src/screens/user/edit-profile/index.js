@@ -23,11 +23,16 @@ const EditProfile = props => {
   const initialValues = {
     name: userInfo?.name || '',
     email: userInfo?.email || '',
-    address: userInfo?.address || '',
+    address: {
+      address: userInfo?.address?.address || '',
+      latitudeDrop: userInfo?.address?.latitudeDrop || '',
+      longitudeDrop: userInfo?.address?.longitudeDrop || '',
+    },
     city: userInfo?.city || '',
     phone: userInfo?.phone || '',
     image: image,
     bloodGroup: userInfo?.bloodGroup || '',
+    role: userInfo?.role,
   };
   const {values, errors, touched, setFieldValue, setFieldTouched, isValid} =
     useFormik({
@@ -43,7 +48,6 @@ const EditProfile = props => {
   // if (isValid && Object.keys(touched).length > 0) {
 
   const onSubmit = () => {
-    console.log('values checck===>', values);
     try {
       dispatch(onUpdateProfile(values, setLoading, props));
     } catch (error) {
@@ -113,13 +117,13 @@ const EditProfile = props => {
           onChangeText={str => setFieldValue('phone', str)}
           value={values.phone}
         />
-        <PrimaryInput
+        {/* <PrimaryInput
           placeholder={'abc'}
           label={'Address'}
           onChangeText={str => setFieldValue('address', str)}
           onBlur={() => setFieldTouched('address', true)}
           value={values.address}
-        />
+        /> */}
         <PrimaryInput
           placeholder={'City'}
           label={'City'}
