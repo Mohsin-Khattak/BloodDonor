@@ -9,42 +9,60 @@ import {SearchInput} from 'components/atoms/inputs';
 import {filterCollections} from 'services/firebase';
 import {COLLECTIONS} from 'config/constants';
 import {useAppSelector} from 'hooks/use-store';
+import {colors} from 'config/colors';
+import {firebase, firestore} from '@react-native-firebase/firestore';
 
 const Home = props => {
   // const isFocus = useIsFocused();
   const {userInfo} = useAppSelector(s => s.user);
+  const db = firebase.firestore();
   const [loading, setLoading] = React.useState(true);
   const [data, setData] = React.useState();
+  console.log('data check===>', data);
   const [searchQuery, setSearchQuery] = useState('');
   const getData = async () => {
     try {
       setLoading(true);
-      const res = await filterCollections(
-        COLLECTIONS?.users,
-        'role',
-        '==',
-        'user',
-      );
+      // const res = await filterCollections(
+      //   COLLECTIONS?.users,
+      //   'role',
+      //   '==',
+      //   'user',
+      //   'isActive',
+      //   '==',
+      //   '1', // Ensure '1' is treated as a string
+      // );
+      const snapshot = await db
+        .collection('users')
+        .where('role', '==', 'user')
+        .where('isActive', '==', '1')
+        .get();
+
+      const users = snapshot.docs.map(doc => doc.data());
+      setData(users);
 
       setData(res);
     } catch (error) {
+      console.error('Error fetching data:', error);
+      // Handle error if necessary
     } finally {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     getData();
   }, []);
 
   const filterData = () => {
     return data.filter(item => {
-      const nameMatch = item.name
+      const nameMatch = item?.name
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
-      const cityMatch = item.city
+      const cityMatch = item?.address?.city
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
-      const bloodGroupMatch = item.bloodGroup
+      const bloodGroupMatch = item?.bloodGroup
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
       return nameMatch || cityMatch || bloodGroupMatch;
@@ -70,7 +88,7 @@ const Home = props => {
         placeholder="Search by name, city, or blood group"
       />
       {loading ? (
-        <Loader />
+        <Loader color={colors.primary} />
       ) : (
         <FlatList
           showsVerticalScrollIndicator={false}

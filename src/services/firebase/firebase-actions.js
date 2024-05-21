@@ -57,7 +57,7 @@ export const onSignupPress = (
   phone,
   address,
   bloodGroup,
-  city,
+  isActive,
   setLoading,
   props,
 ) => {
@@ -80,7 +80,7 @@ export const onSignupPress = (
         phone: phone,
         address: address,
         bloodGroup: bloodGroup,
-        city: city,
+        isActive: isActive,
       };
       await saveData('users', res?.user?.uid, user);
 
@@ -184,11 +184,12 @@ export const onUpdateProfile = (values, setLoading, props) => {
         phone: values?.phone,
         image: values?.image,
         bloodGroup: values?.bloodGroup,
-        city: values?.city,
         role: values?.role,
+        isActive: values?.isActive,
       };
       await saveData(COLLECTIONS.users, uid, user);
       dispatch(setUserInfo(user));
+      props?.navigation?.goBack();
     } catch (error) {
       console.log('error in onPostProfileImagePress', error);
       // Alert.alert('', error);

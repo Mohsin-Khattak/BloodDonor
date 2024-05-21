@@ -34,6 +34,7 @@ import {SERVICES} from 'utils';
 import styles from './styles';
 const Inbox = props => {
   let data = props.route.params.data;
+  // console.log('data check===>', data);
 
   const [messages, setMessages] = useState([]);
   const [loading, setloading] = useState(false);
@@ -81,6 +82,7 @@ const Inbox = props => {
           borderRadius: responsiveWidth(2),
           height: responsiveHeight(8),
           paddingHorizontal: responsiveWidth(0.8),
+          marginBottom: mvs(10),
         }}
         containerStyle={{
           borderTopColor: 'transparent',
@@ -137,34 +139,34 @@ const Inbox = props => {
   const renderAvatar = props => {
     null;
   };
-  function renderActions(props) {
-    return (
-      <>
-        <Actions
-          {...props}
-          onPressActionButton={() => selectPhoto()}
-          containerStyle={{
-            width: responsiveWidth(6),
-            height: responsiveHeight(6),
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginTop: responsiveHeight(1),
-            marginLeft: responsiveWidth(2),
-          }}
-          icon={() => (
-            // <TouchableOpacity onPress={() => selectPhoto()}>
-            <Icon
-              name={'right'}
-              size={responsiveHeight(2.5)}
-              color={'#fff'}
-              type="ionicon"
-            />
-            // </TouchableOpacity>
-          )}
-        />
-      </>
-    );
-  }
+  // function renderActions(props) {
+  //   return (
+  //     <>
+  //       <Actions
+  //         {...props}
+  //         onPressActionButton={() => selectPhoto()}
+  //         containerStyle={{
+  //           width: responsiveWidth(6),
+  //           height: responsiveHeight(6),
+  //           alignItems: 'center',
+  //           justifyContent: 'center',
+  //           marginTop: responsiveHeight(1),
+  //           marginLeft: responsiveWidth(2),
+  //         }}
+  //         icon={() => (
+  //           // <TouchableOpacity onPress={() => selectPhoto()}>
+  //           <Icon
+  //             name={'right'}
+  //             size={responsiveHeight(2.5)}
+  //             color={'#fff'}
+  //             type="ionicon"
+  //           />
+  //           // </TouchableOpacity>
+  //         )}
+  //       />
+  //     </>
+  //   );
+  // }
   const renderBubble = props => {
     return (
       <View>
@@ -318,7 +320,7 @@ const Inbox = props => {
                 color={colors.primary}
               />
             </TouchableOpacity>
-            <View style={styles.imageContainer}>
+            {/* <View style={styles.imageContainer}>
               <Image
                 borderRadius={mvs(10)}
                 // source={
@@ -331,9 +333,12 @@ const Inbox = props => {
                 }}
                 style={styles.backGroundImage}
               />
-            </View>
+            </View> */}
             <View style={{paddingHorizontal: mvs(10), flex: 1}}>
-              <Bold numberOfLines={1} label={data?.name} />
+              <Bold
+                numberOfLines={1}
+                label={data?.name || data?.receiverName}
+              />
             </View>
           </Row>
         </View>
@@ -345,7 +350,7 @@ const Inbox = props => {
             _id: data?.myId,
           }}
           textInputStyle={{color: 'black'}}
-          renderActions={renderActions}
+          // renderActions={renderActions}
           renderAvatar={renderAvatar}
           showAvatarForEveryMessage={true}
           scrollToBottom

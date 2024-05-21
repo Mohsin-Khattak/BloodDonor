@@ -13,13 +13,18 @@ import PrimaryInput from '../../../components/atoms/inputs';
 import {useFormik} from 'formik';
 import {profileFormValidation, signupFormValidation} from 'validations';
 import {onUpdateProfile} from 'services/firebase/firebase-actions';
+import GoogleSearchBar from 'components/google-auto-place';
+import {Row} from 'components/atoms/row';
+import Bold from 'typography/bold-text';
 
 const EditProfile = props => {
   const {userInfo} = useAppSelector(s => s.user);
+
   const dispatch = useAppDispatch();
   const state = useAppSelector(s => s?.user);
   const [loading, setLoading] = React.useState(false);
   const [image, setImage] = React.useState(userInfo?.image || '');
+  const [isActive, setIsActive] = React.useState(userInfo?.isActive === '1');
   const initialValues = {
     name: userInfo?.name || '',
     email: userInfo?.email || '',
@@ -27,12 +32,13 @@ const EditProfile = props => {
       address: userInfo?.address?.address || '',
       latitudeDrop: userInfo?.address?.latitudeDrop || '',
       longitudeDrop: userInfo?.address?.longitudeDrop || '',
+      city: userInfo?.address?.city || '',
     },
-    city: userInfo?.city || '',
     phone: userInfo?.phone || '',
     image: image,
     bloodGroup: userInfo?.bloodGroup || '',
     role: userInfo?.role,
+    isActive: userInfo?.isActive || '0',
   };
   const {values, errors, touched, setFieldValue, setFieldTouched, isValid} =
     useFormik({
@@ -54,6 +60,37 @@ const EditProfile = props => {
       console.log('Error on Signup====>', error);
     }
   };
+  const handleAddress = (data, details) => {
+    console.log('address details check===>', details);
+
+    // Extract latitude and longitude from details.geometry.location
+    const {lat, lng} = details.geometry.location;
+
+    // Extract the city name from address_components
+    let city = '';
+    details.address_components.forEach(component => {
+      if (component.types.includes('locality')) {
+        city = component.long_name;
+      }
+    });
+
+    // Fallback to sublocality if locality is not found
+    if (!city) {
+      details.address_components.forEach(component => {
+        if (component.types.includes('sublocality')) {
+          city = component.long_name;
+        }
+      });
+    }
+
+    // Determine whether this is for pickup or dropoff
+    setFieldValue('address', {
+      latitudeDrop: lat,
+      longitudeDrop: lng,
+      address: details.formatted_address,
+      city: city,
+    });
+  };
 
   const onpenGallery = async () => {
     try {
@@ -66,6 +103,11 @@ const EditProfile = props => {
       console.log('upload image error', error);
     }
   };
+  const toggleIsActive = () => {
+    setIsActive(prev => !prev); // Toggle isActive state
+    setFieldValue('isActive', isActive ? '0' : '1'); // Update formik values
+  };
+
   return (
     <View style={styles.container}>
       <AppHeader back title="Edit Profile" />
@@ -117,19 +159,25 @@ const EditProfile = props => {
           onChangeText={str => setFieldValue('phone', str)}
           value={values.phone}
         />
-        {/* <PrimaryInput
-          placeholder={'abc'}
-          label={'Address'}
-          onChangeText={str => setFieldValue('address', str)}
-          onBlur={() => setFieldTouched('address', true)}
-          value={values.address}
-        /> */}
-        <PrimaryInput
-          placeholder={'City'}
-          label={'City'}
-          onChangeText={str => setFieldValue('city', str)}
-          onBlur={() => setFieldTouched('city', true)}
-          value={values.city}
+        {userInfo?.role === 'user' && (
+          <Row style={{alignItems: 'center', paddingVertical: mvs(10)}}>
+            <Bold label={'Donate Blood'} color={colors.primary} />
+            <TouchableOpacity
+              onPress={() => toggleIsActive()}
+              style={styles.btnContainer}>
+              <View
+                style={{
+                  ...styles.toggleBtn,
+                  backgroundColor: isActive ? 'green' : 'red', // Adjust colors as needed
+                  alignSelf: isActive ? 'flex-end' : 'flex-start',
+                }}
+              />
+            </TouchableOpacity>
+          </Row>
+        )}
+        <GoogleSearchBar
+          onPress={handleAddress}
+          placeholder={'Change Address '}
         />
         <PrimaryButton
           loading={loading}

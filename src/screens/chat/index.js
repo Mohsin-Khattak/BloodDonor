@@ -8,6 +8,7 @@ import AppHeader from '../../components/atoms/headers/index';
 import styles from './styles';
 import {appFBS} from 'services/firebase/firebase-actions';
 import firestore from '@react-native-firebase/firestore';
+import {colors} from 'config/colors';
 
 const Chat = props => {
   // const isFocus = useIsFocused();
@@ -42,7 +43,7 @@ const Chat = props => {
   const renderItem = ({item}) => (
     <ChatCard
       item={item}
-      onPress={() => props.navigation.navigate('Inbox', {info: item})}
+      onPress={() => props.navigation.navigate('Inbox', {data: item})}
     />
   );
   return (
@@ -50,7 +51,7 @@ const Chat = props => {
       <AppHeader title="Chat" />
 
       {loading ? (
-        <Loader />
+        <Loader color={colors.primary} />
       ) : (
         <CustomFlatList
           showsVerticalScrollIndicator={false}

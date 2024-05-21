@@ -14,35 +14,74 @@ import {PrimaryButton} from 'components/atoms/buttons';
 import {getCurrentUserId} from 'services/firebase';
 import {appFBS} from 'services/firebase/firebase-actions';
 import {SERVICES} from 'utils';
-
+import {useAppSelector} from 'hooks/use-store';
+import {Marker} from 'react-native-maps';
+import MapDirections from 'components/map-directions';
+import Icon from 'react-native-vector-icons/FontAwesome';
 const HospitalDetails = props => {
   const userInfo = props?.route?.params?.info?.item;
+  // console.log('hospital params check====>', userInfo);
+
+  const user = useAppSelector(s => s.user.userInfo);
+  // console.log('current user check===>', user);
+  const [loading, setLoading] = React.useState(false);
 
   const navUserToChat = async () => {
-    // setLoading(true);
-    const id = getCurrentUserId();
-    // let receiverInfo = await appFBS.getUserInfo(data?.addedBy);
-    let res = await appFBS.checkMessagesCollection(userInfo?.userId);
-    let obj = {
-      convoId: res.convoId,
+    try {
+      setLoading(true);
+      const id = getCurrentUserId();
+      const res = await appFBS.checkMessagesCollection(userInfo?.userId);
+      const obj = {
+        convoId: res.convoId,
+        receiverId: userInfo?.userId,
+        receiverName: userInfo?.name,
+        myId: id,
+      };
 
-      receiverId: userInfo?.userId,
+      props.navigation.navigate('Inbox', {data: obj});
+    } catch (error) {
+      console.log('Error in New Message====>', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      receiverName: userInfo?.name,
+  const origin = {
+    latitude: userInfo?.address?.latitudeDrop || 37.78825,
+    longitude: userInfo?.address?.longitudeDrop || -122.4324,
+  };
 
-      myId: id,
-    };
-
-    props.navigation.navigate('Inbox', {data: obj});
-
-    // setLoading(false);
+  const destination = {
+    latitude: user?.address?.latitudeDrop || 37.78825,
+    longitude: user?.address?.longitudeDrop || -122.4324,
   };
 
   return (
     <View style={styles.container}>
       <AppHeader back title="Hospital Details" />
       <View style={styles.mapContainer}>
-        <CustomMap />
+        <CustomMap
+          initialRegion={{
+            latitude: (origin.latitude + destination.latitude) / 2,
+            longitude: (origin.longitude + destination.longitude) / 2,
+            latitudeDelta:
+              Math.abs(origin.latitude - destination.latitude) + 0.05,
+            longitudeDelta:
+              Math.abs(origin.longitude - destination.longitude) + 0.05,
+          }}>
+          <Marker coordinate={origin}>
+            <Icon name="hospital-o" size={30} color="red" />
+          </Marker>
+          <Marker coordinate={destination}>
+            <Icon name="user" size={30} color="blue" />
+          </Marker>
+          <MapDirections
+            origin={origin}
+            destination={destination}
+            strokeWidth={3}
+            strokeColor="blue"
+          />
+        </CustomMap>
       </View>
       <View style={{paddingHorizontal: mvs(20), paddingVertical: mvs(10)}}>
         <Row style={{justifyContent: 'flex-start', alignItems: 'center'}}>
@@ -91,6 +130,7 @@ const HospitalDetails = props => {
             title="Call"
           />
           <PrimaryButton
+            loading={loading}
             onPress={() => navUserToChat()}
             containerStyle={styles.btnContainer}
             title="Chat"
@@ -100,4 +140,5 @@ const HospitalDetails = props => {
     </View>
   );
 };
+
 export default HospitalDetails;

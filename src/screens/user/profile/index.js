@@ -14,6 +14,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {PrimaryButton} from 'components/atoms/buttons';
 import {onLogoutPress} from 'services/firebase/firebase-actions';
 import {useAppDispatch, useAppSelector} from 'hooks/use-store';
+import Bold from 'typography/bold-text';
 
 const Profile = props => {
   const dispatch = useAppDispatch();
@@ -72,6 +73,7 @@ const Profile = props => {
             label={userInfo?.bloodGroup || 'N/A'}
           />
         </Row>
+
         <PrimaryButton
           onPress={() => props?.navigation?.navigate('EditProfile')}
           containerStyle={{marginTop: mvs(100)}}

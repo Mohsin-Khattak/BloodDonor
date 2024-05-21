@@ -12,6 +12,7 @@ import Bold from 'typography/bold-text';
 import Medium from 'typography/medium-text';
 
 const DonorsCard = ({item, style, onPress, loading}) => {
+  console.log('item check====>', item);
   const capitalizeFirstLetter = string => {
     if (!string) return 'N/A';
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
@@ -30,7 +31,7 @@ const DonorsCard = ({item, style, onPress, loading}) => {
           source={{
             uri:
               item?.item?.image ||
-              'https://cdn.pixabay.com/photo/2023/12/04/18/40/imran-khan-8430113_1280.jpg',
+              'https://t3.ftcdn.net/jpg/01/18/01/98/360_F_118019822_6CKXP6rXmVhDOzbXZlLqEM2ya4HhYzSV.jpg',
           }}
           style={styles.backGroundImage}
         />
@@ -47,7 +48,7 @@ const DonorsCard = ({item, style, onPress, loading}) => {
               <Medium
                 color={colors.black}
                 fontSize={mvs(14)}
-                label={item?.item?.city}
+                label={item?.item?.address?.city}
               />
             </View>
           </Row>

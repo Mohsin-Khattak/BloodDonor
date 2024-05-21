@@ -5,6 +5,7 @@ import { colors } from '../../../config/colors';
 import { mvs } from '../../../config/metrices';
 import Bold from '../../../typography/bold-text';
 import Regular from './../../../typography/regular-text';
+import AntDesign  from 'react-native-vector-icons/AntDesign';
 type props = {
   style?: StyleProp<TextStyle>
   title?: string
@@ -20,7 +21,8 @@ const AppHeader = ({
   return (
     <View style={[styles.container, style]}>
       {back && <TouchableOpacity style={styles.back} onPress={()=>navigation?.goBack()}>
-        <Bold color={colors.primary} fontSize={mvs(20)} label={'<-'} />
+        {/* <Bold color={colors.primary} fontSize={mvs(20)} label={'<-'} /> */}
+        <AntDesign name={'arrowleft'} size={25} color={colors.primary} />
       </TouchableOpacity>}
       <Bold style={[styles.title]} label={title} />
     </View>

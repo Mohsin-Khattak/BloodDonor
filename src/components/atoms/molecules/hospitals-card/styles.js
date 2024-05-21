@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
   },
   backGroundImage: {
     width: '100%',
-    height: mvs(120),
+    height: mvs(150),
     borderWidth: 1,
     borderTopRightRadius: mvs(10),
     borderTopLeftRadius: mvs(10),

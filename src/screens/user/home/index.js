@@ -8,8 +8,11 @@ import styles from './styles';
 import {filterCollections} from 'services/firebase';
 import {COLLECTIONS} from 'config/constants';
 import {SearchInput} from 'components/atoms/inputs';
+import {useAppSelector} from 'hooks/use-store';
 
 const Home = props => {
+  const {userInfo} = useAppSelector(s => s.user);
+  console.log('userinfo check====>', userInfo);
   const [loading, setLoading] = React.useState(false);
   const [data, setData] = React.useState([]);
   const [searchQuery, setSearchQuery] = useState('');

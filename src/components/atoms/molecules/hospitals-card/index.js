@@ -37,13 +37,11 @@ const HospitalCard = ({item, style, onPress, loading}) => {
         <Row style={{justifyContent: 'flex-start', gap: mvs(10)}}>
           <Entypo size={25} name={'location-pin'} color={colors.primary} />
           <View style={{flex: 1}}>
-            <Regular
+            <Bold
               color={colors.black}
               fontSize={mvs(14)}
               label={
-                data?.city || data?.address
-                  ? `${data.address?.address || ''}`.trim()
-                  : 'N/A'
+                data?.address ? `${data?.address?.city || ''}`.trim() : 'N/A'
               }
             />
           </View>

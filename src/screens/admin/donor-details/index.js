@@ -1,58 +1,94 @@
-import {View, Text} from 'react-native';
-import React from 'react';
-import styles from './styles';
-import AppHeader from '../../../components/atoms/headers/index';
+import {PrimaryButton} from 'components/atoms/buttons';
+import {Row} from 'components/atoms/row';
 import CustomMap from 'components/custom-map';
-import Bold from 'typography/bold-text';
+import MapDirections from 'components/map-directions';
 import {colors} from 'config/colors';
 import {mvs} from 'config/metrices';
-import {Row} from 'components/atoms/row';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Regular from 'typography/regular-text';
-import Feather from 'react-native-vector-icons/Feather';
-import {PrimaryButton} from 'components/atoms/buttons';
-import {SERVICES} from 'utils';
-import {appFBS} from 'services/firebase/firebase-actions';
-import {getCurrentUserId} from 'services/firebase';
 import {useAppSelector} from 'hooks/use-store';
+import React from 'react';
+import {View} from 'react-native';
+import {Marker} from 'react-native-maps';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Entypo from 'react-native-vector-icons/Entypo';
+import Feather from 'react-native-vector-icons/Feather';
+import {getCurrentUserId} from 'services/firebase';
+import {appFBS} from 'services/firebase/firebase-actions';
+import Bold from 'typography/bold-text';
+import Regular from 'typography/regular-text';
+import {SERVICES} from 'utils';
+import AppHeader from '../../../components/atoms/headers/index';
+import styles from './styles';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const DonorDetails = props => {
-  const {location} = useAppSelector(s => s.user);
   const userInfo = props?.route?.params?.info;
-  console.log('userinfo check====>', userInfo);
+  // console.log('donor details check====>', userInfo);
+  const hospital = useAppSelector(s => s?.user?.userInfo);
+  // console.log('hospital details check====>', hospital);
+  const [loading, setLoading] = React.useState(false);
 
   const navUserToChat = async () => {
-    // setLoading(true);
-    const id = getCurrentUserId();
-    // let receiverInfo = await appFBS.getUserInfo(data?.addedBy);
-    let res = await appFBS.checkMessagesCollection(userInfo?.userId);
-    let obj = {
-      convoId: res.convoId,
+    try {
+      setLoading(true);
+      const id = getCurrentUserId();
+      // let receiverInfo = await appFBS.getUserInfo(data?.addedBy);
+      let res = await appFBS.checkMessagesCollection(userInfo?.userId);
+      let obj = {
+        convoId: res.convoId,
 
-      receiverId: userInfo?.userId,
+        receiverId: userInfo?.userId,
 
-      receiverName: userInfo?.name,
+        receiverName: userInfo?.name,
 
-      myId: id,
-    };
+        myId: id,
+      };
 
-    props.navigation.navigate('Inbox', {data: obj});
+      props.navigation.navigate('Inbox', {data: obj});
+    } catch (error) {
+      console.log('Error in New Message====>', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const origin = {
+    latitude: hospital?.address?.latitudeDrop || 37.78825,
+    longitude: hospital?.address?.longitudeDrop || -122.4324,
+  };
 
-    // setLoading(false);
+  const destination = {
+    latitude: userInfo?.address?.latitudeDrop || 37.78825,
+    longitude: userInfo?.address?.longitudeDrop || -122.4324,
   };
   return (
     <View style={styles.container}>
       <AppHeader back title="Donor Details" />
       <View style={styles.mapContainer}>
-        <CustomMap />
+        <CustomMap
+          initialRegion={{
+            latitude: (origin.latitude + destination.latitude) / 2,
+            longitude: (origin.longitude + destination.longitude) / 2,
+            latitudeDelta:
+              Math.abs(origin.latitude - destination.latitude) + 0.05,
+            longitudeDelta:
+              Math.abs(origin.longitude - destination.longitude) + 0.05,
+          }}>
+          <Marker coordinate={origin}>
+            <Icon name="hospital-o" size={30} color="red" />
+          </Marker>
+          <Marker coordinate={destination}>
+            <Icon name="user" size={30} color="blue" />
+          </Marker>
+          <MapDirections
+            origin={origin}
+            destination={destination}
+            strokeWidth={3}
+            strokeColor="blue"
+          />
+        </CustomMap>
       </View>
       <View style={{paddingHorizontal: mvs(20), paddingVertical: mvs(10)}}>
         <Row style={{justifyContent: 'flex-start', alignItems: 'center'}}>
-          <MaterialCommunityIcons
-            name={'hospital-building'}
-            size={25}
-            color={colors.primary}
-          />
+          <AntDesign name={'user'} size={25} color={colors.primary} />
           <Bold
             style={{marginLeft: mvs(20)}}
             label={userInfo?.name || 'N/A'}
@@ -61,11 +97,7 @@ const DonorDetails = props => {
           />
         </Row>
         <Row style={{justifyContent: 'flex-start', marginTop: mvs(10)}}>
-          <MaterialCommunityIcons
-            name={'hospital-marker'}
-            size={25}
-            color={colors.primary}
-          />
+          <Entypo name={'location-pin'} size={25} color={colors.primary} />
           <Regular
             style={{marginLeft: mvs(20), flex: 1}}
             label={`${userInfo?.address?.address} ` || 'N/A'}
@@ -73,6 +105,7 @@ const DonorDetails = props => {
             color={colors.primary}
           />
         </Row>
+
         <Row style={{justifyContent: 'flex-start', marginTop: mvs(10)}}>
           <Feather name={'phone'} size={25} color={colors.primary} />
           <Regular
@@ -82,6 +115,7 @@ const DonorDetails = props => {
             color={colors.primary}
           />
         </Row>
+
         <Row style={{marginTop: mvs(20)}}>
           <PrimaryButton
             onPress={() => SERVICES.dialPhone(userInfo?.phone)}
@@ -89,11 +123,18 @@ const DonorDetails = props => {
             title="Call"
           />
           <PrimaryButton
+            loading={loading}
             onPress={() => navUserToChat()}
             containerStyle={styles.btnContainer}
             title="Chat"
           />
         </Row>
+        {userInfo?.userId && (
+          <PrimaryButton
+            containerStyle={{marginTop: mvs(15), borderRadius: mvs(10)}}
+            title="Donate Blood"
+          />
+        )}
       </View>
     </View>
   );

@@ -33,8 +33,8 @@ const Signup = props => {
     password: '',
     phone: '',
     address: '',
-    city: '',
     bloodGroup: '',
+    isActive: '1',
   };
   const {values, errors, touched, setFieldValue, setFieldTouched, isValid} =
     useFormik({
@@ -61,7 +61,7 @@ const Signup = props => {
           values?.phone,
           values?.address,
           values?.bloodGroup,
-          values?.city,
+          values?.isActive,
           setLoading,
           props,
         ),
@@ -70,14 +70,45 @@ const Signup = props => {
       console.log('Error on Signup====>', error);
     }
   };
+  // const handleAddress = (data, details) => {
+  //   // Extract latitude and longitude from details.geometry.location
+  //   const {lat, lng} = details.geometry.location;
+  //   // Determine whether this is for pickup or dropoff
+  //   setFieldValue('address', {
+  //     latitudeDrop: lat,
+  //     longitudeDrop: lng,
+  //     address: details.formatted_address,
+  //   });
+  // };
   const handleAddress = (data, details) => {
+    console.log('address details check===>', details);
+
     // Extract latitude and longitude from details.geometry.location
     const {lat, lng} = details.geometry.location;
+
+    // Extract the city name from address_components
+    let city = '';
+    details.address_components.forEach(component => {
+      if (component.types.includes('locality')) {
+        city = component.long_name;
+      }
+    });
+
+    // Fallback to sublocality if locality is not found
+    if (!city) {
+      details.address_components.forEach(component => {
+        if (component.types.includes('sublocality')) {
+          city = component.long_name;
+        }
+      });
+    }
+
     // Determine whether this is for pickup or dropoff
     setFieldValue('address', {
       latitudeDrop: lat,
       longitudeDrop: lng,
       address: details.formatted_address,
+      city: city,
     });
   };
   return (
@@ -162,13 +193,7 @@ const Signup = props => {
           onBlur={() => setFieldTouched('phone', true)}
           value={values.phone}
         />
-        <PrimaryInput
-          placeholder={'City'}
-          label={'City'}
-          onChangeText={str => setFieldValue('city', str)}
-          onBlur={() => setFieldTouched('city', true)}
-          value={values.city}
-        />
+
         <GoogleSearchBar
           onPress={handleAddress}
           placeholder={'Search  Address '}
