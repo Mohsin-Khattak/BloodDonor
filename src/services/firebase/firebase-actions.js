@@ -155,10 +155,12 @@ export const handlePasswordReset = async (email, setLoading, props) => {
 };
 
 export const onAddDonorPress = async (user, setOnDonateLoading, props) => {
+  console.log('Check donor data:', user?.counter);
+
   try {
     setOnDonateLoading(true);
     const hospitalId = getCurrentUserId();
-    const donorId = hospitalId || SERVICES.getUUID();
+    const donorId = user?.userId || SERVICES.getUUID();
 
     await saveData(COLLECTIONS.donor, donorId, {
       ...user,

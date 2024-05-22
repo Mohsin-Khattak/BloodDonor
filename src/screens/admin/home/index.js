@@ -11,15 +11,19 @@ import {COLLECTIONS} from 'config/constants';
 import {useAppSelector} from 'hooks/use-store';
 import {colors} from 'config/colors';
 import {firebase, firestore} from '@react-native-firebase/firestore';
+import CustomMap from 'components/custom-map';
+import {Marker} from 'react-native-maps';
 
 const Home = props => {
   // const isFocus = useIsFocused();
-  const {userInfo} = useAppSelector(s => s.user);
+
   const db = firebase.firestore();
   const [loading, setLoading] = React.useState(true);
   const [data, setData] = React.useState();
-  console.log('data check===>', data);
+  // console.log('data check===>', data);
   const [searchQuery, setSearchQuery] = useState('');
+  const hospitalInfo = useAppSelector(s => s?.user?.userInfo);
+  // console.log('userinfo check===>', hospitalInfo?.address);
   const getData = async () => {
     try {
       setLoading(true);
@@ -70,27 +74,62 @@ const Home = props => {
       }
     />
   );
+  const hospitalLatitude = hospitalInfo?.address?.latitudeDrop || 30.3753;
+  const hospitalLongitude = hospitalInfo?.address?.longitudeDrop || 69.3451;
+
   return (
     <View style={styles.container}>
       <AppHeader title="Home" />
+
       <SearchInput
-        containerStyle={{marginHorizontal: mvs(20), marginVertical: mvs(10)}}
+        containerStyle={styles.serachInput}
         value={searchQuery}
         onChangeText={setSearchQuery}
         placeholder="Search by name, city, or blood group"
       />
+
       {loading ? (
         <Loader color={colors.primary} />
       ) : (
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          data={filterData()}
-          renderItem={renderItem}
-          contentContainerStyle={{
-            paddingBottom: mvs(60),
-            paddingHorizontal: mvs(20),
-          }}
-        />
+        <View style={{flex: 1}}>
+          <CustomMap
+            initialRegion={{
+              latitude: hospitalLatitude || 30.3753, // Default to center of Pakistan if no hospital info
+              longitude: hospitalLongitude || 69.3451, // Default to center of Pakistan if no hospital info
+              latitudeDelta: 10,
+              longitudeDelta: 10,
+            }}>
+            {hospitalLatitude && hospitalLongitude && (
+              <Marker
+                coordinate={{
+                  latitude: hospitalLatitude,
+                  longitude: hospitalLongitude,
+                }}
+                title={'Hospital'}
+                description={'Hospital Location'}
+                pinColor="blue"
+              />
+            )}
+            {filterData().map(
+              (user, index) =>
+                user?.address?.latitudeDrop &&
+                user?.address?.longitudeDrop && (
+                  <Marker
+                    key={index}
+                    coordinate={{
+                      latitude: user.address.latitudeDrop,
+                      longitude: user.address.longitudeDrop,
+                    }}
+                    title={user.name}
+                    description={`Blood Group: ${user.bloodGroup}`}
+                    onPress={() =>
+                      props.navigation.navigate('DonorDetails', {info: user})
+                    }
+                  />
+                ),
+            )}
+          </CustomMap>
+        </View>
       )}
     </View>
   );

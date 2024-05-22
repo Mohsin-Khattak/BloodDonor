@@ -69,9 +69,9 @@ const Donors = props => {
     <DonorsListCard
       placeholder={'Search Donor'}
       item={item}
-      // onPress={() =>
-      //   props.navigation.navigate('DonorDetails', {info: item?.item})
-      // }
+      onPress={() =>
+        props.navigation.navigate('DonorDetails', {info: item?.item})
+      }
     />
   );
   return (
