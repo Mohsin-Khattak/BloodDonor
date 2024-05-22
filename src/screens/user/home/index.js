@@ -12,7 +12,6 @@ import {useAppSelector} from 'hooks/use-store';
 
 const Home = props => {
   const {userInfo} = useAppSelector(s => s.user);
-  console.log('userinfo check====>', userInfo);
   const [loading, setLoading] = React.useState(false);
   const [data, setData] = React.useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -25,7 +24,6 @@ const Home = props => {
         '==',
         'admin',
       );
-      console.log('user data check====>', res);
 
       setData(res);
     } catch (error) {
@@ -37,16 +35,15 @@ const Home = props => {
     getData();
   }, []);
   const filterData = () => {
-    if (!searchQuery) {
-      return data;
-    }
     return data.filter(item => {
-      const nameMatch = item.name
-        ?.toLowerCase()
-        .includes(searchQuery.toLowerCase());
-      const cityMatch = item.city
-        ?.toLowerCase()
-        .includes(searchQuery.toLowerCase());
+      const nameMatch = item?.name
+        ? item?.name?.toLowerCase().includes(searchQuery.toLowerCase())
+        : false;
+
+      const cityMatch = item?.address?.city
+        ? item.address.city.toLowerCase().includes(searchQuery.toLowerCase())
+        : false;
+
       return nameMatch || cityMatch;
     });
   };

@@ -10,7 +10,6 @@ import Bold from 'typography/bold-text';
 
 const HospitalCard = ({item, style, onPress, loading}) => {
   const data = item?.item;
-  console.log('first', data);
   return (
     <TouchableOpacity onPress={onPress} style={styles.container}>
       <Image

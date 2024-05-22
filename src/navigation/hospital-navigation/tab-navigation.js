@@ -58,19 +58,19 @@ const TabNavigator = () => {
           }}
         />
 
-        {/* <BottomTab.Screen
+        <BottomTab.Screen
           name="Donors"
           component={Donors}
           options={{
             tabBarIcon: focused => (
               <Feather
-                name="users"
+                name="list"
                 size={25}
                 color={focused ? colors.primary : 'black'}
               />
             ),
           }}
-        /> */}
+        />
         <BottomTab.Screen
           name="Chat"
           component={Chat}

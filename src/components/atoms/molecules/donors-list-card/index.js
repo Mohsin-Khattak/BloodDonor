@@ -6,17 +6,22 @@ import styles from './styles';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Row} from 'components/atoms/row';
 import {colors} from 'config/colors';
 import Bold from 'typography/bold-text';
 import Medium from 'typography/medium-text';
+import moment from 'moment';
 
-const DonorsCard = ({item, style, onPress, loading}) => {
+const DonorsListCard = ({item, style, onPress, loading}) => {
+  console.log('item check====>', item?.item);
   const capitalizeFirstLetter = string => {
     if (!string) return 'N/A';
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
   };
-
+  const formattedDateTime = moment(item?.item?.currentDateTime).format(
+    'MMMM Do YYYY',
+  );
   return (
     <TouchableOpacity onPress={onPress} style={styles.container}>
       <Row style={{justifyContent: 'flex-start'}}>
@@ -51,7 +56,7 @@ const DonorsCard = ({item, style, onPress, loading}) => {
               />
             </View>
           </Row>
-          <Row style={styles.rowContainer}>
+          {/* <Row style={styles.rowContainer}>
             <Feather size={20} name={'phone'} color={colors.primary} />
             <View style={{marginLeft: mvs(10)}}>
               <Medium
@@ -60,28 +65,60 @@ const DonorsCard = ({item, style, onPress, loading}) => {
                 label={item?.item?.phone}
               />
             </View>
+          </Row> */}
+
+          <Row>
+            <Row style={{...styles.rowContainer, width: '50%', flex: 1}}>
+              <MaterialIcons
+                size={25}
+                name={'bloodtype'}
+                color={colors.primary}
+              />
+              <View style={{marginLeft: mvs(10)}}>
+                <Medium
+                  color={colors.black}
+                  fontSize={mvs(14)}
+                  label={item?.item?.bloodGroup}
+                />
+              </View>
+            </Row>
+            <Row style={{...styles.rowContainer, width: '50%'}}>
+              <MaterialIcons size={25} name={'man'} color={colors.primary} />
+              <View style={{marginLeft: mvs(10)}}>
+                <Medium
+                  color={colors.black}
+                  fontSize={mvs(14)}
+                  label={capitalizeFirstLetter(item?.item?.gender)}
+                />
+              </View>
+            </Row>
           </Row>
+
           <Row style={styles.rowContainer}>
-            <MaterialIcons
+            <MaterialCommunityIcons
               size={25}
-              name={'bloodtype'}
+              name={'counter'}
               color={colors.primary}
             />
             <View style={{marginLeft: mvs(10)}}>
               <Medium
                 color={colors.black}
                 fontSize={mvs(14)}
-                label={item?.item?.bloodGroup}
+                label={item?.item?.counter}
               />
             </View>
           </Row>
           <Row style={styles.rowContainer}>
-            <MaterialIcons size={25} name={'man'} color={colors.primary} />
-            <View style={{marginLeft: mvs(10)}}>
+            <MaterialCommunityIcons
+              size={25}
+              name={'update'}
+              color={colors.primary}
+            />
+            <View style={{marginLeft: mvs(10), flex: 1}}>
               <Medium
                 color={colors.black}
                 fontSize={mvs(14)}
-                label={capitalizeFirstLetter(item?.item?.gender)}
+                label={formattedDateTime}
               />
             </View>
           </Row>
@@ -90,4 +127,4 @@ const DonorsCard = ({item, style, onPress, loading}) => {
     </TouchableOpacity>
   );
 };
-export default React.memo(DonorsCard);
+export default React.memo(DonorsListCard);

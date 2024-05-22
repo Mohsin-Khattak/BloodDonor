@@ -148,12 +148,32 @@ export const handlePasswordReset = async (email, setLoading, props) => {
     // SERVICES.resetStack(props, 'VerifyResetPassword');
   } catch (error) {
     console.log('error in handlePasswordReset', error);
-    Alert.alert('', SERVICES._returnError(error));
+    Alert.alert('', SERVICES.returnError(error));
   } finally {
     setLoading(false);
   }
 };
 
+export const onAddDonorPress = async (user, setOnDonateLoading, props) => {
+  try {
+    setOnDonateLoading(true);
+    const hospitalId = getCurrentUserId();
+    const donorId = hospitalId || SERVICES.getUUID();
+
+    await saveData(COLLECTIONS.donor, donorId, {
+      ...user,
+      hospitalId,
+    });
+
+    Alert.alert('Donor update successfully');
+    props?.navigation?.navigate('Donors');
+  } catch (error) {
+    console.log('Error in onAddDonorPress:', error);
+    Alert.alert('Error', error.message);
+  } finally {
+    setOnDonateLoading(false);
+  }
+};
 export const onAddTaskPress = (task, props) => {
   return async dispatch => {
     try {

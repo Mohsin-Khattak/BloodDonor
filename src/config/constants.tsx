@@ -2,6 +2,7 @@ export const COLLECTIONS={
     users:'users',
     chat:'chat',
     tasks:'tasks',
+    donor:'donor',
 }
 export const DATE_FORMAT = {
     yyyy_mm_dd: 'YYYY-MM-DD',

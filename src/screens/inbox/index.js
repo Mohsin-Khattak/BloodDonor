@@ -2,6 +2,7 @@ import firestore from '@react-native-firebase/firestore';
 import moment from 'moment';
 import React, {useEffect, useRef, useState} from 'react';
 import {
+  Alert,
   Image,
   LogBox,
   SafeAreaView,
@@ -105,6 +106,7 @@ const Inbox = props => {
     );
   };
   const rendersend = props => {
+    // Alert.alert('working on it');
     return (
       <Send
         {...props}

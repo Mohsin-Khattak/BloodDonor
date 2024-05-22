@@ -12,11 +12,13 @@ import styles from './styles';
 import {filterCollections, getCurrentUserId} from 'services/firebase';
 import {COLLECTIONS} from 'config/constants';
 import {useFocusEffect} from '@react-navigation/native';
+import HistoryCard from 'components/atoms/molecules/history-card';
+// import {firebase, firestore} from '@react-native-firebase/firestore';
 
-const Donors = props => {
+const History = props => {
   // const isFocus = useIsFocused();
   const {userInfo} = useAppSelector(s => s.user);
-
+  const db = firebase.firestore();
   const [loading, setLoading] = React.useState(true);
   const [data, setData] = React.useState();
   console.log('data check===>', data);
@@ -24,15 +26,31 @@ const Donors = props => {
   const getData = async () => {
     try {
       setLoading(true);
-      const id = getCurrentUserId();
-      const res = await filterCollections(
-        COLLECTIONS?.donor,
-        'hospitalId',
-        '==',
-        id,
-      );
+      const snapshot = await db
+        .collection('donor')
+        .where('userId', '==', userInfo?.userId)
+        .get();
 
-      setData(res);
+      const users = snapshot.docs.map(doc => doc.data());
+
+      // Create a Map to store unique hospitalIds
+      const hospitalMap = new Map();
+      users.forEach(user => {
+        if (!hospitalMap.has(user.hospitalId)) {
+          hospitalMap.set(user.hospitalId, user);
+        }
+      });
+
+      // Extract the values from the Map
+      const uniqueHospitalUsers = Array.from(hospitalMap.values());
+
+      // If there are multiple hospitals, add all to the result
+      const result =
+        uniqueHospitalUsers.length > 1
+          ? uniqueHospitalUsers
+          : [uniqueHospitalUsers[0]];
+
+      setData(result);
     } catch (error) {
       console.error('Error fetching data:', error);
       // Handle error if necessary
@@ -40,6 +58,7 @@ const Donors = props => {
       setLoading(false);
     }
   };
+
   useFocusEffect(
     useCallback(() => {
       // Your reload logic here, e.g., fetch data or update state
@@ -51,22 +70,18 @@ const Donors = props => {
     }, []),
   );
 
-  // useEffect(() => {
-  //   getData();
-  // }, []);
-
   const filterData = () => {
     return data.filter(item => {
-      const nameMatch = item?.name
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
+      const nameMatch = item?.hospitalName
+        ? item?.hospitalName?.toLowerCase().includes(searchQuery.toLowerCase())
+        : false;
 
       return nameMatch;
     });
   };
 
   const renderItem = item => (
-    <DonorsListCard
+    <HistoryCard
       placeholder={'Search Donor'}
       item={item}
       // onPress={() =>
@@ -76,7 +91,7 @@ const Donors = props => {
   );
   return (
     <View style={styles.container}>
-      <AppHeader back title="Donors List" />
+      <AppHeader back title="History" />
       <SearchInput
         containerStyle={{marginHorizontal: mvs(20), marginVertical: mvs(10)}}
         value={searchQuery}
@@ -99,4 +114,4 @@ const Donors = props => {
     </View>
   );
 };
-export default Donors;
+export default History;

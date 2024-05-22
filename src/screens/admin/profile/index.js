@@ -73,9 +73,14 @@ const Profile = props => {
             label={userInfo?.bloodGroup || 'N/A'}
           />
         </Row> */}
+        {/* <PrimaryButton
+          title="Donors List"
+          containerStyle={{marginTop: mvs(50)}}
+          onPress={() => props?.navigation?.navigate('Donors')}
+        /> */}
         <PrimaryButton
           onPress={() => props?.navigation?.navigate('EditProfile')}
-          containerStyle={{marginTop: mvs(100)}}
+          containerStyle={{marginTop: mvs(60)}}
           title="Edit Profile"
         />
         <PrimaryButton

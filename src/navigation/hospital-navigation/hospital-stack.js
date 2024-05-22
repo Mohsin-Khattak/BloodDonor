@@ -8,6 +8,7 @@ import {horizontalAnimation} from 'utils';
 import TabNavigator from './tab-navigation';
 import Inbox from 'screens/inbox';
 import DonorDetails from 'screens/admin/donor-details';
+import Donors from 'screens/admin/donors';
 const Stack = createNativeStackNavigator();
 
 export const HospitalStack = props => {
@@ -25,6 +26,7 @@ export const HospitalStack = props => {
         <Stack.Screen name="TabNavigator" component={TabNavigator} />
         <Stack.Screen name="DonorDetails" component={DonorDetails} />
         <Stack.Screen name="Inbox" component={Inbox} />
+        {/* <Stack.Screen name="Donors" component={Donors} /> */}
       </Stack.Navigator>
     </View>
   );

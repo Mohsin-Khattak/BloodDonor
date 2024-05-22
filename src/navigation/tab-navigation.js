@@ -4,12 +4,14 @@ import * as React from 'react';
 import {Platform, StatusBar, View} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors} from '../config/colors';
 import Home from 'screens/user/home';
 import Profile from 'screens/user/profile';
 import {useSelector} from 'react-redux';
 import {useAppSelector} from 'hooks/use-store';
 import Chat from 'screens/chat';
+import History from 'screens/user/history';
 
 const Tab = createBottomTabNavigator();
 const BottomTab = createNativeStackNavigator();
@@ -38,6 +40,19 @@ const TabNavigator = () => {
             tabBarIcon: focused => (
               <AntDesign
                 name="home"
+                size={25}
+                color={focused ? colors.primary : 'black'}
+              />
+            ),
+          }}
+        />
+        <BottomTab.Screen
+          name="History"
+          component={History}
+          options={{
+            tabBarIcon: focused => (
+              <MaterialCommunityIcons
+                name="history"
                 size={25}
                 color={focused ? colors.primary : 'black'}
               />

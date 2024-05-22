@@ -14,6 +14,8 @@ const styles = StyleSheet.create({
   subInnerContainer: {
     flex: 1,
     backgroundColor: colors.background,
+    // backgroundColor: 'red',
+    // paddingBottom: 20,
   },
 
   headerview: {

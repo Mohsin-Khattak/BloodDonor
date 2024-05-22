@@ -34,7 +34,7 @@ export const PrimaryButton = (props: props) => {
       style={[
         styles.primaryContainer,
         containerStyle,
-        // {backgroundColor: `${colors.white}${disabled ? '50' : ''}`},
+        {backgroundColor: `${colors.primary}${disabled ? '50' : ''}`},
       ]}
       onPress={onPress}>
       {loading ? (

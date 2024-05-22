@@ -23,15 +23,6 @@ const Home = props => {
   const getData = async () => {
     try {
       setLoading(true);
-      // const res = await filterCollections(
-      //   COLLECTIONS?.users,
-      //   'role',
-      //   '==',
-      //   'user',
-      //   'isActive',
-      //   '==',
-      //   '1', // Ensure '1' is treated as a string
-      // );
       const snapshot = await db
         .collection('users')
         .where('role', '==', 'user')
@@ -40,8 +31,6 @@ const Home = props => {
 
       const users = snapshot.docs.map(doc => doc.data());
       setData(users);
-
-      setData(res);
     } catch (error) {
       console.error('Error fetching data:', error);
       // Handle error if necessary
@@ -57,14 +46,17 @@ const Home = props => {
   const filterData = () => {
     return data.filter(item => {
       const nameMatch = item?.name
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
+        ? item?.name?.toLowerCase().includes(searchQuery.toLowerCase())
+        : false;
+
       const cityMatch = item?.address?.city
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
+        ? item.address.city.toLowerCase().includes(searchQuery.toLowerCase())
+        : false;
+
       const bloodGroupMatch = item?.bloodGroup
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
+        ? item?.bloodGroup?.toLowerCase().includes(searchQuery.toLowerCase())
+        : false;
+
       return nameMatch || cityMatch || bloodGroupMatch;
     });
   };

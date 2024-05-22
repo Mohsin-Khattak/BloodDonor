@@ -76,7 +76,7 @@ const Profile = props => {
 
         <PrimaryButton
           onPress={() => props?.navigation?.navigate('EditProfile')}
-          containerStyle={{marginTop: mvs(100)}}
+          containerStyle={{marginTop: mvs(30)}}
           title="Edit Profile"
         />
         <PrimaryButton
