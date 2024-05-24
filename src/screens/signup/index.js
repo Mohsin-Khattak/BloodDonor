@@ -10,7 +10,7 @@ import Regular from 'typography/regular-text';
 import {signupFormValidation} from 'validations';
 import {PrimaryButton} from '../../components/atoms/buttons';
 import AppHeader from '../../components/atoms/headers/index';
-import PrimaryInput from '../../components/atoms/inputs';
+import PrimaryInput, {InputWithIcon} from '../../components/atoms/inputs';
 import {KeyboardAvoidScrollview} from '../../components/atoms/keyboard-avoid-scrollview';
 import {useAppDispatch, useAppSelector} from '../../hooks/use-store';
 import {onSignupPress} from '../../services/firebase/firebase-actions';
@@ -26,6 +26,12 @@ const Signup = props => {
   const [loading, setLoading] = React.useState(false);
   const [check, setCheck] = React.useState('admin');
   const [selectGender, setSelectGender] = React.useState('male');
+  const item = [
+    {id: 1, title: 'A'},
+    {id: 2, title: 'B'},
+    {id: 3, title: 'AB'},
+    {id: 4, title: 'O'},
+  ];
 
   const initialValues = {
     name: '',
@@ -72,8 +78,6 @@ const Signup = props => {
   };
 
   const handleAddress = (data, details) => {
-    console.log('address details check===>', details);
-
     // Extract latitude and longitude from details.geometry.location
     const {lat, lng} = details.geometry.location;
 
@@ -101,6 +105,10 @@ const Signup = props => {
       address: details.formatted_address,
       city: city,
     });
+  };
+
+  const handleBloodGroupChange = title => {
+    setFieldValue('bloodGroup', title);
   };
   return (
     <View style={styles.container}>
@@ -189,14 +197,29 @@ const Signup = props => {
           onPress={handleAddress}
           placeholder={'Search  Address '}
         />
-
+        {/* <PrimaryInput
+          placeholder={'abc'}
+          label={'Address'}
+          onChangeText={str => setFieldValue('address', str)}
+          onBlur={() => setFieldTouched('address', true)}
+          value={values.address}
+        /> */}
         {check === 'user' && (
-          <PrimaryInput
-            placeholder="A"
-            label={'Blood Group'}
-            onChangeText={str => setFieldValue('bloodGroup', str)}
-            value={values.bloodGroup}
-          />
+          <>
+            {/* <PrimaryInput
+              placeholder="A"
+              label={'Blood Group'}
+              onChangeText={str => setFieldValue('bloodGroup', str)}
+              value={values.bloodGroup}
+            /> */}
+            <InputWithIcon
+              label="Please Select Blood Group"
+              items={item}
+              value={values.bloodGroup}
+              id={values.bloodGroup}
+              onChangeText={handleBloodGroupChange}
+            />
+          </>
         )}
         {check === 'user' && (
           <>
