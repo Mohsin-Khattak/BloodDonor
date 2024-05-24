@@ -1,4 +1,4 @@
-import firestore from '@react-native-firebase/firestore';
+import firestore, {firebase} from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import {Alert} from 'react-native';
 import {
@@ -12,17 +12,14 @@ import {
 } from '.';
 // import storageServices from '../storageServices/storage.services';
 // import toastServices from '../toastServices/toast.services';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import moment from 'moment';
 import {store} from 'store';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {COLLECTIONS, STORAGEKEYS} from '../../config/constants';
-import {resetUser, setUserInfo} from '../../store/reducers/user-reducer';
-import {reset} from '../../store/reducers/user-reducer';
+import {reset, setUserInfo, userSlice} from '../../store/reducers/user-reducer';
 import {SERVICES} from '../../utils';
 import {getData} from './index';
-import {userSlice} from '../../store/reducers/user-reducer';
-import {resetStack} from 'navigation/navigation-ref';
 export const onLoginPress = (email, password, setLoading, props) => {
   return async dispatch => {
     try {
@@ -155,19 +152,41 @@ export const handlePasswordReset = async (email, setLoading, props) => {
 };
 
 export const onAddDonorPress = async (user, setOnDonateLoading, props) => {
-  console.log('Check donor data:', user?.counter);
-
   try {
     setOnDonateLoading(true);
-    const hospitalId = getCurrentUserId();
-    const donorId = user?.userId || SERVICES.getUUID();
 
-    await saveData(COLLECTIONS.donor, donorId, {
-      ...user,
-      hospitalId,
-    });
+    const donorId = user?.userId;
+    const hospitalId = user?.hospitalId;
 
-    Alert.alert('Donor update successfully');
+    // Check if the donor already exists for this hospital
+    const snapshot = await firebase
+      .firestore()
+      .collection(COLLECTIONS.donor)
+      .where('hospitalId', '==', hospitalId)
+      .where('userId', '==', donorId)
+      .get();
+
+    if (snapshot.docs.length > 0) {
+      // Donor exists, update the record
+      const docId = snapshot.docs[0].id;
+      await firebase
+        .firestore()
+        .collection(COLLECTIONS.donor)
+        .doc(docId)
+        .update(user);
+    } else {
+      // Donor does not exist, create a new record
+      const newDocRef = firebase
+        .firestore()
+        .collection(COLLECTIONS.donor)
+        .doc();
+      await newDocRef.set({
+        ...user,
+        id: newDocRef.id, // Ensure a unique ID is set
+      });
+    }
+
+    Alert.alert('Donor updated successfully');
     props?.navigation?.navigate('Donors');
   } catch (error) {
     console.log('Error in onAddDonorPress:', error);
@@ -176,6 +195,7 @@ export const onAddDonorPress = async (user, setOnDonateLoading, props) => {
     setOnDonateLoading(false);
   }
 };
+
 export const onAddTaskPress = (task, props) => {
   return async dispatch => {
     try {

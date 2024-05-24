@@ -14,6 +14,7 @@ import { logo } from 'assets/images';
 import { mvs } from 'config/metrices';
 import { SERVICES } from '../../utils';
 import Geocoder from 'react-native-geocoding';
+
 type props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 const Login = (props: props) => {
@@ -21,35 +22,31 @@ const Login = (props: props) => {
 
   const {navigation} = props;
   const dispatch = useAppDispatch();
-  const [loading,setLoading]=React.useState(false)
+  const [loading, setLoading] = React.useState(false);
   const state = useAppSelector(s => s?.user);
-  // const [currentLocation, setCurrentLocation] = React.useState();
-  // const [fullAddress, setFullAddress] = React.useState();
-  // console.log('full address check====>', fullAddress);
-
-  // React.useEffect(() => {
-  //   (async () => {
-  //     SERVICES.get_current_location(position => {
-  //       const {latitude, longitude} = position.coords;
-  //       setCurrentLocation({latitude, longitude});
-  //       SERVICES._returnAddress(latitude, longitude).then(res => {
-  //         setFullAddress(res);
-  //       });
-  //     });
-  //   })();
-  // }, []);
 
   const [values, setValues] = React.useState({
     email: '',
     password: '',
   });
 
+  const handleLoginPress = () => {
+    if (!values.email ) {
+      Alert.alert('Error', 'Please enter both email and password.');
+      return;
+    }else if( !values.password)
+    {
+      Alert.alert('Error', 'Please enter password.');
+      return;
+    }
+    dispatch(onLoginPress(values.email, values.password, setLoading, props));
+  };
+
   return (
     <View style={styles.container}>
       <AppHeader title="Sign-in" />
-      <Image source={logo} style={{alignSelf:'center',marginTop:mvs(50),height:mvs(100),width:mvs(100)}}/>
-      <KeyboardAvoidScrollview
-        contentContainerStyle={styles.contentContainerStyle}>
+      <Image source={logo} style={{alignSelf: 'center', marginTop: mvs(50), height: mvs(100), width: mvs(100)}} />
+      <KeyboardAvoidScrollview contentContainerStyle={styles.contentContainerStyle}>
         <PrimaryInput
           keyboardType={'email-address'}
           placeholder='abc@gmail.com'
@@ -64,16 +61,14 @@ const Login = (props: props) => {
           onChangeText={str => setValues({...values, password: str})}
           value={values.password}
         />
-        <TouchableOpacity onPress={()=> navigation.navigate('Forgot')} style={{alignSelf:'flex-end'}}>
-          <Medium label={'Forgot password !'}/>
+        <TouchableOpacity onPress={() => navigation.navigate('Forgot')} style={{alignSelf: 'flex-end'}}>
+          <Medium label={'Forgot password !'} />
         </TouchableOpacity>
         <PrimaryButton
-          disabled={!values?.email || !values?.password}
+          disabled={loading}
           loading={loading}
           title={'Login'}
-          onPress={() =>
-            dispatch(onLoginPress(values?.email, values?.password, setLoading ,props))
-          }
+          onPress={handleLoginPress}
           containerStyle={styles.button}
         />
         <Medium
@@ -85,4 +80,5 @@ const Login = (props: props) => {
     </View>
   );
 };
+
 export default Login;

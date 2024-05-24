@@ -29,7 +29,6 @@ const DonorDetails = props => {
 
   const db = firebase.firestore();
   const hospital = useAppSelector(s => s?.user?.userInfo);
-  console.log('hospital info check ====>', hospital);
   const [loading, setLoading] = useState(false);
   const [donorLoading, setDonorLoading] = useState(true);
   const [onDonateLoading, setOnDonateLoading] = useState(false);
@@ -73,26 +72,47 @@ const DonorDetails = props => {
 
   const onPressDonate = async () => {
     try {
-      setCounter(prevCounter => {
-        const newCounter = prevCounter + 1;
-        const updatedDonor = donorList
-          ? {
-              ...donorList,
-              counter: newCounter,
-              hospitalImage: hospital?.image,
-              hospitalName: hospital?.name,
-              hospitalCity: hospital?.address?.city,
-              currentDateTime: currentDateTime,
-            }
-          : {
-              ...donor,
-              counter: newCounter,
-            };
-        onAddDonorPress(updatedDonor, setOnDonateLoading, props);
-        return newCounter;
-      });
+      setOnDonateLoading(true);
+
+      const hospitalId = getCurrentUserId();
+      const donorId = userInfo?.userId;
+
+      // Check if the donor already exists for this hospital
+      const snapshot = await db
+        .collection('donor')
+        .where('hospitalId', '==', hospitalId)
+        .where('userId', '==', donorId)
+        .get();
+
+      let updatedDonor;
+      if (snapshot.docs.length > 0) {
+        // Donor exists, update the counter
+        const doc = snapshot.docs[0];
+        updatedDonor = {
+          ...doc.data(),
+          counter: doc.data().counter + 1,
+          hospitalImage: hospital?.image,
+          hospitalName: hospital?.name,
+          hospitalCity: hospital?.address?.city,
+          currentDateTime: currentDateTime,
+        };
+      } else {
+        // Donor does not exist, create a new entry
+        updatedDonor = {
+          ...donor,
+          counter: 1,
+          hospitalId: hospitalId,
+          userId: donorId,
+        };
+      }
+
+      // Save the updated or new donor record
+      await onAddDonorPress(updatedDonor, setOnDonateLoading, props);
+      setCounter(updatedDonor.counter);
     } catch (error) {
       console.log('Error on donate press:', error);
+    } finally {
+      setOnDonateLoading(false);
     }
   };
 

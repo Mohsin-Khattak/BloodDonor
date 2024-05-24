@@ -11,14 +11,7 @@ import firestore from '@react-native-firebase/firestore';
 import {colors} from 'config/colors';
 
 const Chat = props => {
-  // const isFocus = useIsFocused();
-  // const {chat} = useAppSelector(s => s);
-
   const [loading, setLoading] = React.useState(true);
-
-  // React.useEffect(() => {
-  //   if (isFocus) dispatch(getConversationsList(setLoading));
-  // }, [isFocus]);
 
   const [conversation, setConversation] = useState([]);
 

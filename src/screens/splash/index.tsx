@@ -70,23 +70,3 @@ const Splash = (props: props) => {
   );
 };
 export default Splash;
-
-
-
-// const Loading = async () => {
-
-//   let userId = await storageServices.getKey('userId');
-//   setTimeout(async () => {
-
-//     if (userId) {
-//       if (userType == 'buyer') {
-//         navigation.replace('BuyerApp', {screen: 'App'});
-//       } else {
-//         navigation.replace('SellerApp', {screen: 'App'});
-//       }
-//     } else {
-//       navigation.replace('SellerApp', {screen: 'App'});
-//       // navigation.replace('Welcome');
-//     }
-//   }, 1500);
-// };

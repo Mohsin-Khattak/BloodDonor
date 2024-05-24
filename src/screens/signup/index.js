@@ -70,16 +70,7 @@ const Signup = props => {
       console.log('Error on Signup====>', error);
     }
   };
-  // const handleAddress = (data, details) => {
-  //   // Extract latitude and longitude from details.geometry.location
-  //   const {lat, lng} = details.geometry.location;
-  //   // Determine whether this is for pickup or dropoff
-  //   setFieldValue('address', {
-  //     latitudeDrop: lat,
-  //     longitudeDrop: lng,
-  //     address: details.formatted_address,
-  //   });
-  // };
+
   const handleAddress = (data, details) => {
     console.log('address details check===>', details);
 
@@ -198,13 +189,7 @@ const Signup = props => {
           onPress={handleAddress}
           placeholder={'Search  Address '}
         />
-        {/* <PrimaryInput
-          placeholder={'abc'}
-          label={'Address'}
-          onChangeText={str => setFieldValue('address', str)}
-          onBlur={() => setFieldTouched('address', true)}
-          value={values.address}
-        /> */}
+
         {check === 'user' && (
           <PrimaryInput
             placeholder="A"

@@ -9,20 +9,12 @@ import {colors} from 'config/colors';
 import Bold from 'typography/bold-text';
 
 const ChatCard = ({item, style, onPress, loading}) => {
-  console.log('first=====>', item);
-  // first=====> {"convoId": "chatRoom_THfIIXOFOsSZWYRonwjAqJhFjIC3_jWkZUlSkhyQKjFu91bxf1sEkCJQ2", "lastMessage": "hello", "messageTime": "2024-05-19:16:37:31", "myId": "THfIIXOFOsSZWYRonwjAqJhFjIC3", "name": "Alshifa Hospital", "profilePicture": undefined, "recieverId": "jWkZUlSkhyQKjFu91bxf1sEkCJQ2", "unread": 0}
-
   return (
     <TouchableOpacity onPress={onPress} style={styles.container}>
       <Row style={styles.InnerContainer}>
         <View style={styles.imageContainer}>
           <Image
             borderRadius={mvs(10)}
-            // source={
-            //   item?.receiver_image
-            //     ? {uri: item?.receiver_image}
-            //     : IMG?.DrawerLogo
-            // }
             source={{
               uri:
                 item?.profilePicture ||

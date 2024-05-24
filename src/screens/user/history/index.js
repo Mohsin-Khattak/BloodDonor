@@ -13,6 +13,8 @@ import {filterCollections, getCurrentUserId} from 'services/firebase';
 import {COLLECTIONS} from 'config/constants';
 import {useFocusEffect} from '@react-navigation/native';
 import HistoryCard from 'components/atoms/molecules/history-card';
+import Bold from 'typography/bold-text';
+import CustomFlatList from 'components/atoms/custom-flatlist';
 // import {firebase, firestore} from '@react-native-firebase/firestore';
 
 const History = props => {
@@ -101,7 +103,7 @@ const History = props => {
       {loading ? (
         <Loader color={colors.primary} />
       ) : (
-        <FlatList
+        <CustomFlatList
           showsVerticalScrollIndicator={false}
           data={filterData()}
           renderItem={renderItem}

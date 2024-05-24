@@ -24,8 +24,15 @@ const  styles = StyleSheet.create({
         height:mvs(35),
         borderRadius:mvs(5),
         borderWidth:mvs(1),
-        borderColor:colors.primary
-    }
+        borderColor:colors.primary,
+        
+    },
+    errorText: {
+        color: 'red',
+        fontSize: 12,
+        marginTop: -10,
+        marginBottom: 10,
+      },
 
 });
 export default styles;

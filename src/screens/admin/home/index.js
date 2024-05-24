@@ -130,6 +130,15 @@ const Home = props => {
             )}
           </CustomMap>
         </View>
+        // <FlatList
+        //   showsVerticalScrollIndicator={false}
+        //   data={filterData()}
+        //   renderItem={renderItem}
+        //   contentContainerStyle={{
+        //     paddingBottom: mvs(60),
+        //     paddingHorizontal: mvs(20),
+        //   }}
+        // />
       )}
     </View>
   );

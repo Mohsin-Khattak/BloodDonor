@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {CommonActions} from '@react-navigation/native';
+import { CommonActions } from '@react-navigation/native';
 import moment from 'moment';
 import {
   Alert,
@@ -9,13 +9,11 @@ import {
   Share,
   ToastAndroid,
 } from 'react-native';
+import Geocoder from 'react-native-geocoding';
 import Geolocation from 'react-native-geolocation-service';
 import ImagePicker from 'react-native-image-crop-picker';
 import uuid from 'react-native-uuid';
-import {NavigationProps} from '../types/navigation-types';
-import Geocoder from 'react-native-geocoding';
-
-import DocumentPicker from 'react-native-document-picker';
+import { NavigationProps } from '../types/navigation-types';
 import { uploadFile } from 'services/firebase';
 
 const getErrorList = (data: any) => {

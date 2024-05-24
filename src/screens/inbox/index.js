@@ -38,6 +38,7 @@ const Inbox = props => {
   // console.log('data check===>', data);
 
   const [messages, setMessages] = useState([]);
+
   const [loading, setloading] = useState(false);
   useEffect(() => {
     LogBox.ignoreAllLogs();
@@ -59,7 +60,7 @@ const Inbox = props => {
   }
   const getMessages = async () => {
     let list = await appFBS.GetMessages(data.convoId);
-    console.log('list chat==============>', list);
+    // console.log('list chat==============>', list);
     setMessages(list);
   };
   const selectPhoto = async () => {
@@ -170,6 +171,10 @@ const Inbox = props => {
   //   );
   // }
   const renderBubble = props => {
+    const {createdAt} = props.currentMessage;
+    const formattedTime = createdAt
+      ? moment(createdAt.toDate()).format('LT')
+      : '';
     return (
       <View>
         <Bubble
@@ -260,14 +265,12 @@ const Inbox = props => {
             left: {color: '#595959'},
           }}
         />
-        {/* <Text style={styles.messageTime2}>{moment().format('LT')}</Text> */}
         <Text
           style={
-            props.currentMessage.user._id == data?.receiverId
-              ? styles.messageTime
-              : styles.messageTime2
+            props.position === 'left' ? styles.messageTime : styles.messageTime2
           }>
-          {moment(Date()).format('LT')}
+          {formattedTime}
+          {/* {moment(Date()).format('LT')} */}
         </Text>
       </View>
     );

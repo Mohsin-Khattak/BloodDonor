@@ -19,7 +19,7 @@ const Donors = props => {
 
   const [loading, setLoading] = React.useState(true);
   const [data, setData] = React.useState();
-  console.log('data check===>', data);
+  // console.log('data check===>', data);
   const [searchQuery, setSearchQuery] = useState('');
   const getData = async () => {
     try {
@@ -50,10 +50,6 @@ const Donors = props => {
       };
     }, []),
   );
-
-  // useEffect(() => {
-  //   getData();
-  // }, []);
 
   const filterData = () => {
     return data.filter(item => {
