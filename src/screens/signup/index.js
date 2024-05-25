@@ -5,20 +5,18 @@ import {colors} from 'config/colors';
 import {mvs} from 'config/metrices';
 import {useFormik} from 'formik';
 import React from 'react';
-import {Image, View} from 'react-native';
+import {Image, View, Text} from 'react-native';
 import Regular from 'typography/regular-text';
 import {signupFormValidation} from 'validations';
 import {PrimaryButton} from '../../components/atoms/buttons';
 import AppHeader from '../../components/atoms/headers/index';
 import PrimaryInput, {InputWithIcon} from '../../components/atoms/inputs';
 import {KeyboardAvoidScrollview} from '../../components/atoms/keyboard-avoid-scrollview';
-import {useAppDispatch, useAppSelector} from '../../hooks/use-store';
+import {useAppDispatch} from '../../hooks/use-store';
 import {onSignupPress} from '../../services/firebase/firebase-actions';
 import Medium from '../../typography/medium-text';
 import styles from './styles';
 import GoogleSearchBar from 'components/google-auto-place';
-import {SERVICES} from '../../utils';
-import Geocoder from 'react-native-geocoding';
 
 const Signup = props => {
   const dispatch = useAppDispatch();
@@ -42,46 +40,57 @@ const Signup = props => {
     bloodGroup: '',
     isActive: '1',
   };
-  const {values, errors, touched, setFieldValue, setFieldTouched, isValid} =
-    useFormik({
-      initialValues: initialValues,
-      validateOnBlur: true,
-      validateOnChange: true,
-      validate: signupFormValidation,
-      onSubmit: () => {},
-    });
 
-  console.log('touched:=>', touched);
-  console.log('errors:=>', errors);
-  // if (isValid && Object.keys(touched).length > 0) {
+  const validate = values => {
+    const errors = {};
+    if (!values.name) errors.name = 'Name is required';
+    if (!values.email) errors.email = 'Email is required';
+    if (!values.password) errors.password = 'Password is required';
+    if (!values.phone) errors.phone = 'Phone is required';
+    if (!values.address) errors.address = 'Address is required';
+    if (check === 'user' && !values.bloodGroup)
+      errors.bloodGroup = 'Blood group is required';
+    return errors;
+  };
 
-  const onSubmit = () => {
-    try {
+  const {
+    values,
+    errors,
+    touched,
+    setFieldValue,
+    setFieldTouched,
+    handleSubmit,
+    setTouched,
+  } = useFormik({
+    initialValues: initialValues,
+    validateOnBlur: true,
+    validateOnChange: true,
+    validate: validate,
+    onSubmit: values => {
+      setLoading(true);
       dispatch(
         onSignupPress(
-          values?.name,
-          values?.email,
-          values?.password,
-          (role = check),
-          (gender = selectGender),
-          values?.phone,
-          values?.address,
-          values?.bloodGroup,
-          values?.isActive,
+          values.name,
+          values.email,
+          values.password,
+          check, // role
+          selectGender, // gender
+          values.phone,
+          values.address,
+          values.bloodGroup,
+          values.isActive,
           setLoading,
           props,
         ),
-      );
-    } catch (error) {
-      console.log('Error on Signup====>', error);
-    }
-  };
+      ).catch(error => {
+        console.log('Error on Signup====>', error);
+        setLoading(false);
+      });
+    },
+  });
 
   const handleAddress = (data, details) => {
-    // Extract latitude and longitude from details.geometry.location
     const {lat, lng} = details.geometry.location;
-
-    // Extract the city name from address_components
     let city = '';
     details.address_components.forEach(component => {
       if (component.types.includes('locality')) {
@@ -89,7 +98,6 @@ const Signup = props => {
       }
     });
 
-    // Fallback to sublocality if locality is not found
     if (!city) {
       details.address_components.forEach(component => {
         if (component.types.includes('sublocality')) {
@@ -98,7 +106,6 @@ const Signup = props => {
       });
     }
 
-    // Determine whether this is for pickup or dropoff
     setFieldValue('address', {
       latitudeDrop: lat,
       longitudeDrop: lng,
@@ -110,6 +117,19 @@ const Signup = props => {
   const handleBloodGroupChange = title => {
     setFieldValue('bloodGroup', title);
   };
+
+  const handleSignupPress = () => {
+    setTouched({
+      name: true,
+      email: true,
+      password: true,
+      phone: true,
+      address: true,
+      bloodGroup: check === 'user',
+    });
+    handleSubmit();
+  };
+
   return (
     <View style={styles.container}>
       <AppHeader back title="Sign-up" />
@@ -135,7 +155,7 @@ const Signup = props => {
                 label={'Admin'}
               />
               <Checkbox
-                checked={check === 'admin' ? true : false}
+                checked={check === 'admin'}
                 onPress={() => setCheck('admin')}
               />
             </Row>
@@ -146,7 +166,7 @@ const Signup = props => {
                 label={'Blood Donor'}
               />
               <Checkbox
-                checked={check === 'user' ? true : false}
+                checked={check === 'user'}
                 onPress={() => setCheck('user')}
               />
             </Row>
@@ -158,6 +178,7 @@ const Signup = props => {
             label={'Full Name'}
             onChangeText={str => setFieldValue('name', str)}
             value={values.name}
+            onBlur={() => setFieldTouched('name', true)}
           />
         ) : (
           <PrimaryInput
@@ -165,6 +186,7 @@ const Signup = props => {
             label={'Name'}
             onChangeText={str => setFieldValue('name', str)}
             value={values.name}
+            onBlur={() => setFieldTouched('name', true)}
           />
         )}
 
@@ -174,6 +196,7 @@ const Signup = props => {
           label={'Email'}
           onChangeText={str => setFieldValue('email', str)}
           value={values.email}
+          onBlur={() => setFieldTouched('email', true)}
         />
         <PrimaryInput
           secureTextEntry
@@ -195,29 +218,18 @@ const Signup = props => {
 
         <GoogleSearchBar
           onPress={handleAddress}
-          placeholder={'Search  Address '}
+          placeholder={'Search Address '}
         />
-        {/* <PrimaryInput
-          placeholder={'abc'}
-          label={'Address'}
-          onChangeText={str => setFieldValue('address', str)}
-          onBlur={() => setFieldTouched('address', true)}
-          value={values.address}
-        /> */}
+
         {check === 'user' && (
           <>
-            {/* <PrimaryInput
-              placeholder="A"
-              label={'Blood Group'}
-              onChangeText={str => setFieldValue('bloodGroup', str)}
-              value={values.bloodGroup}
-            /> */}
             <InputWithIcon
               label="Please Select Blood Group"
               items={item}
               value={values.bloodGroup}
               id={values.bloodGroup}
               onChangeText={handleBloodGroupChange}
+              onBlur={() => setFieldTouched('bloodGroup', true)}
             />
           </>
         )}
@@ -272,11 +284,33 @@ const Signup = props => {
           </>
         )}
 
+        {/* Display error messages */}
+        <View style={{marginTop: mvs(20)}}>
+          {errors.name && touched.name && (
+            <Text style={styles.errorText}>{errors.name}</Text>
+          )}
+          {errors.email && touched.email && (
+            <Text style={styles.errorText}>{errors.email}</Text>
+          )}
+          {errors.password && touched.password && (
+            <Text style={styles.errorText}>{errors.password}</Text>
+          )}
+          {errors.phone && touched.phone && (
+            <Text style={styles.errorText}>{errors.phone}</Text>
+          )}
+          {errors.address && touched.address && (
+            <Text style={styles.errorText}>{errors.address}</Text>
+          )}
+          {check === 'user' && errors.bloodGroup && touched.bloodGroup && (
+            <Text style={styles.errorText}>{errors.bloodGroup}</Text>
+          )}
+        </View>
+
         <PrimaryButton
-          disabled={!values?.email || !values?.password || !values.name}
+          disabled={loading}
           title={'Signup'}
           loading={loading}
-          onPress={() => onSubmit()}
+          onPress={handleSignupPress}
           containerStyle={styles.button}
         />
         <Medium

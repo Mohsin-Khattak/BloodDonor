@@ -23,7 +23,6 @@ const History = props => {
   const db = firebase.firestore();
   const [loading, setLoading] = React.useState(true);
   const [data, setData] = React.useState();
-  console.log('data check===>', data);
   const [searchQuery, setSearchQuery] = useState('');
   const getData = async () => {
     try {

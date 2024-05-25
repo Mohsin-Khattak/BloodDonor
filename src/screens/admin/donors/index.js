@@ -18,8 +18,8 @@ const Donors = props => {
   const {userInfo} = useAppSelector(s => s.user);
 
   const [loading, setLoading] = React.useState(true);
-  const [data, setData] = React.useState();
-  // console.log('data check===>', data);
+  const [data, setData] = React.useState([]);
+  console.log('data check===>', data);
   const [searchQuery, setSearchQuery] = useState('');
   const getData = async () => {
     try {
@@ -32,7 +32,12 @@ const Donors = props => {
         id,
       );
 
-      setData(res);
+      // Sort the data by currentDateTime field in descending order
+      const sortedData = res.sort(
+        (a, b) => new Date(b.currentDateTime) - new Date(a.currentDateTime),
+      );
+
+      setData(sortedData);
     } catch (error) {
       console.error('Error fetching data:', error);
       // Handle error if necessary
@@ -40,6 +45,7 @@ const Donors = props => {
       setLoading(false);
     }
   };
+
   useFocusEffect(
     useCallback(() => {
       // Your reload logic here, e.g., fetch data or update state
@@ -65,9 +71,9 @@ const Donors = props => {
     <DonorsListCard
       placeholder={'Search Donor'}
       item={item}
-      onPress={() =>
-        props.navigation.navigate('DonorDetails', {info: item?.item})
-      }
+      // onPress={() =>
+      //   props.navigation.navigate('DonorDetails', {info: item?.item})
+      // }
     />
   );
   return (

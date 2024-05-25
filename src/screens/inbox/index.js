@@ -142,34 +142,34 @@ const Inbox = props => {
   const renderAvatar = props => {
     null;
   };
-  // function renderActions(props) {
-  //   return (
-  //     <>
-  //       <Actions
-  //         {...props}
-  //         onPressActionButton={() => selectPhoto()}
-  //         containerStyle={{
-  //           width: responsiveWidth(6),
-  //           height: responsiveHeight(6),
-  //           alignItems: 'center',
-  //           justifyContent: 'center',
-  //           marginTop: responsiveHeight(1),
-  //           marginLeft: responsiveWidth(2),
-  //         }}
-  //         icon={() => (
-  //           // <TouchableOpacity onPress={() => selectPhoto()}>
-  //           <Icon
-  //             name={'right'}
-  //             size={responsiveHeight(2.5)}
-  //             color={'#fff'}
-  //             type="ionicon"
-  //           />
-  //           // </TouchableOpacity>
-  //         )}
-  //       />
-  //     </>
-  //   );
-  // }
+  function renderActions(props) {
+    return (
+      <>
+        <Actions
+          {...props}
+          onPressActionButton={() => selectPhoto()}
+          containerStyle={{
+            width: responsiveWidth(6),
+            height: responsiveHeight(6),
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginTop: responsiveHeight(1),
+            marginLeft: responsiveWidth(2),
+          }}
+          icon={() => (
+            <TouchableOpacity onPress={() => selectPhoto()}>
+              <Icon
+                name={'right'}
+                size={responsiveHeight(2.5)}
+                color={'#fff'}
+                type="ionicon"
+              />
+            </TouchableOpacity>
+          )}
+        />
+      </>
+    );
+  }
   const renderBubble = props => {
     const {createdAt} = props.currentMessage;
     const formattedTime = createdAt
@@ -375,6 +375,9 @@ const Inbox = props => {
           placeholder={'Type Message'}
           renderSend={rendersend}
           infiniteScroll={true}
+          messagesContainerStyle={{
+            paddingBottom: mvs(40),
+          }}
         />
       </View>
     </SafeAreaView>

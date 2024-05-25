@@ -14,7 +14,6 @@ import Medium from 'typography/medium-text';
 import moment from 'moment';
 
 const HistoryCard = ({item, style, onPress, loading}) => {
-  console.log('item check====>', item?.item);
   const capitalizeFirstLetter = string => {
     if (!string) return 'N/A';
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();

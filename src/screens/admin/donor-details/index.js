@@ -42,6 +42,7 @@ const DonorDetails = props => {
     hospitalName: hospital?.name,
     hospitalCity: hospital?.address?.city,
     currentDateTime: currentDateTime,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
   };
 
   const getData = async () => {
@@ -95,6 +96,9 @@ const DonorDetails = props => {
           hospitalName: hospital?.name,
           hospitalCity: hospital?.address?.city,
           currentDateTime: currentDateTime,
+          createdAt:
+            doc.data().createdAt ||
+            firebase.firestore.FieldValue.serverTimestamp(),
         };
       } else {
         // Donor does not exist, create a new entry
