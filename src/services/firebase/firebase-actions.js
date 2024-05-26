@@ -10,8 +10,6 @@ import {
   saveData,
   signInWithEmailAndPassword,
 } from '.';
-// import storageServices from '../storageServices/storage.services';
-// import toastServices from '../toastServices/toast.services';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import moment from 'moment';
@@ -25,18 +23,19 @@ export const onLoginPress = (email, password, setLoading, props) => {
     try {
       setLoading(true);
       const res = await signInWithEmailAndPassword(email, password);
-
+      // if (res?.user?.emailVerified) {
       const response = await getData('users', res?.user?.uid);
       console.log('res of onLoginPress=>', response);
       SERVICES.setItem(STORAGEKEYS.userId, res?.user?.uid);
       SERVICES.setItem(STORAGEKEYS.role, response?.role);
-
       dispatch(setUserInfo(response));
-      // SERVICES.resetStack(props, 'HospitalStack');
       SERVICES.resetStack(
         props,
         response?.role == 'user' ? 'TabNavigator' : 'HospitalStack',
       );
+      // } else {
+      //   Alert.alert('Your email is not verified');
+      // }
     } catch (error) {
       console.log('error in onLoginPress', error);
       Alert.alert('', SERVICES.returnError(error));
@@ -67,7 +66,6 @@ export const onSignupPress = (
         email,
         password,
       );
-      console.log('res of onSignupPress=>', res);
       const user = {
         userId: res?.user?.uid,
         name: name,
@@ -79,14 +77,14 @@ export const onSignupPress = (
         bloodGroup: bloodGroup,
         isActive: isActive,
       };
+      await res?.user?.sendEmailVerification();
       await saveData('users', res?.user?.uid, user);
-
       SERVICES.setItem(STORAGEKEYS.userId, res?.user?.uid);
-
       dispatch(setUserInfo(user));
       // SERVICES.resetStack(
       props.navigation.navigate(
-        role == 'user' ? 'TabNavigator' : 'HospitalStack',
+        // role == 'user' ? 'TabNavigator' : 'HospitalStack',
+        'VerifyEmail',
       );
       // );
     } catch (error) {

@@ -34,6 +34,7 @@ const DonorDetails = props => {
   const [onDonateLoading, setOnDonateLoading] = useState(false);
   const [counter, setCounter] = useState(0);
   const [donorList, setDonorList] = useState(null);
+  const [lastDonationDate, setLastDonationDate] = useState(null);
   const currentDateTime = moment().format('YYYY-MM-DD HH:mm:ss');
 
   const donor = {
@@ -57,8 +58,10 @@ const DonorDetails = props => {
 
       const users = snapshot.docs.map(doc => doc.data());
       if (users.length > 0) {
-        setDonorList(users[0]);
-        setCounter(users[0]?.counter || 1);
+        const user = users[0];
+        setDonorList(user);
+        setCounter(user?.counter || 1);
+        setLastDonationDate(user?.currentDateTime);
       }
       setDonorLoading(false);
     } catch (error) {
@@ -113,6 +116,7 @@ const DonorDetails = props => {
       // Save the updated or new donor record
       await onAddDonorPress(updatedDonor, setOnDonateLoading, props);
       setCounter(updatedDonor.counter);
+      setLastDonationDate(currentDateTime);
     } catch (error) {
       console.log('Error on donate press:', error);
     } finally {
@@ -149,6 +153,11 @@ const DonorDetails = props => {
     latitude: userInfo?.address?.latitudeDrop || 37.78825,
     longitude: userInfo?.address?.longitudeDrop || -122.4324,
   };
+
+  const nextDonationDate = lastDonationDate
+    ? moment(lastDonationDate).add(1, 'month')
+    : null;
+  const canDonate = !nextDonationDate || moment().isAfter(nextDonationDate);
 
   return (
     <View style={styles.container}>
@@ -224,12 +233,21 @@ const DonorDetails = props => {
                 title="Chat"
               />
             </Row>
-            {userInfo?.userId && (
+            {canDonate ? (
               <PrimaryButton
                 loading={onDonateLoading}
                 onPress={onPressDonate}
                 containerStyle={{marginTop: mvs(15), borderRadius: mvs(10)}}
                 title="Donate Blood"
+              />
+            ) : (
+              <Regular
+                style={{marginTop: mvs(15), textAlign: 'center'}}
+                label={`You can donate blood after ${moment(
+                  nextDonationDate,
+                ).format('MMMM Do YYYY')}`}
+                fontSize={mvs(14)}
+                color={colors.primary}
               />
             )}
           </View>

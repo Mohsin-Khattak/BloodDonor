@@ -12,6 +12,7 @@ import styles from './styles';
 import {filterCollections, getCurrentUserId} from 'services/firebase';
 import {COLLECTIONS} from 'config/constants';
 import {useFocusEffect} from '@react-navigation/native';
+import CustomFlatList from 'components/atoms/custom-flatlist';
 
 const Donors = props => {
   // const isFocus = useIsFocused();
@@ -87,7 +88,7 @@ const Donors = props => {
       {loading ? (
         <Loader color={colors.primary} />
       ) : (
-        <FlatList
+        <CustomFlatList
           showsVerticalScrollIndicator={false}
           data={filterData()}
           renderItem={renderItem}
