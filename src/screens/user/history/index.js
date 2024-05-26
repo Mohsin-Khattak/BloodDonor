@@ -1,20 +1,16 @@
 import {firebase} from '@react-native-firebase/firestore';
+import {useFocusEffect} from '@react-navigation/native';
+import CustomFlatList from 'components/atoms/custom-flatlist';
 import {SearchInput} from 'components/atoms/inputs';
 import {Loader} from 'components/atoms/loader';
-import DonorsListCard from 'components/atoms/molecules/donors-list-card';
+import HistoryCard from 'components/atoms/molecules/history-card';
 import {colors} from 'config/colors';
 import {mvs} from 'config/metrices';
 import {useAppSelector} from 'hooks/use-store';
-import React, {useCallback, useEffect, useState} from 'react';
-import {FlatList, View} from 'react-native';
+import React, {useCallback, useState} from 'react';
+import {View} from 'react-native';
 import AppHeader from '../../../components/atoms/headers/index';
 import styles from './styles';
-import {filterCollections, getCurrentUserId} from 'services/firebase';
-import {COLLECTIONS} from 'config/constants';
-import {useFocusEffect} from '@react-navigation/native';
-import HistoryCard from 'components/atoms/molecules/history-card';
-import Bold from 'typography/bold-text';
-import CustomFlatList from 'components/atoms/custom-flatlist';
 // import {firebase, firestore} from '@react-native-firebase/firestore';
 
 const History = props => {
@@ -22,7 +18,7 @@ const History = props => {
   const {userInfo} = useAppSelector(s => s.user);
   const db = firebase.firestore();
   const [loading, setLoading] = React.useState(true);
-  const [data, setData] = React.useState();
+  const [data, setData] = React.useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const getData = async () => {
     try {

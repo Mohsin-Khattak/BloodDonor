@@ -144,14 +144,14 @@ const EditProfile = props => {
           onChangeText={str => setFieldValue('email', str)}
           value={values.email}
         />
-        {userInfo?.role === 'user' && (
+        {/* {userInfo?.role === 'user' && (
           <PrimaryInput
             placeholder="A"
             label={'Blood Group'}
             onChangeText={str => setFieldValue('bloodGroup', str)}
             value={values.bloodGroup}
           />
-        )}
+        )} */}
         <PrimaryInput
           placeholder="03448422399"
           keyboardType={'numeric'}
