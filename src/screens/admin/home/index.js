@@ -20,8 +20,10 @@ const Home = props => {
   const db = firebase.firestore();
   const [loading, setLoading] = React.useState(true);
   const [data, setData] = React.useState();
+  // console.log('data check===>', data);
   const [searchQuery, setSearchQuery] = useState('');
   const hospitalInfo = useAppSelector(s => s?.user?.userInfo);
+  // console.log('userinfo check===>', hospitalInfo?.address);
   const getData = async () => {
     try {
       setLoading(true);

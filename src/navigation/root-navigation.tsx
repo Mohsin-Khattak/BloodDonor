@@ -15,7 +15,6 @@ import { HospitalStack } from './hospital-navigation/hospital-stack';
 import Inbox from 'screens/inbox';
 import HospitalDetails from 'screens/user/hospital-details';
 import EditProfile from 'screens/user/edit-profile';
-import VerifyEmail from 'screens/veriy-email';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export const RootNavigator = () => {
@@ -39,7 +38,6 @@ export const RootNavigator = () => {
         <Stack.Screen name="HospitalDetails" component={HospitalDetails} />
         <Stack.Screen name="TabNavigator" component={TabNavigator} />
         <Stack.Screen name="HospitalStack" component={HospitalStack} />
-        <Stack.Screen name="VerifyEmail" component={VerifyEmail} />
 
       </Stack.Navigator>
     </SafeAreaView>

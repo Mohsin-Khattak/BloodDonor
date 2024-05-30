@@ -12,6 +12,5 @@ type RootStackParamList = {
   TabNavigator:undefined;
   HospitalStack:undefined;
   EditProfile:undefined;
-  VerifyEmail:undefined;
 };
 export default RootStackParamList;
