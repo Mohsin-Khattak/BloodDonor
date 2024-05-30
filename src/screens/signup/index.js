@@ -24,10 +24,14 @@ const Signup = props => {
   const [check, setCheck] = React.useState('admin');
   const [selectGender, setSelectGender] = React.useState('male');
   const item = [
-    {id: 1, title: 'A'},
-    {id: 2, title: 'B'},
-    {id: 3, title: 'AB'},
-    {id: 4, title: 'O'},
+    {id: 1, title: 'A+'},
+    {id: 2, title: 'A-'},
+    {id: 3, title: 'B+'},
+    {id: 4, title: 'B-'},
+    {id: 4, title: 'AB+'},
+    {id: 4, title: 'AB-'},
+    {id: 4, title: 'O+'},
+    {id: 4, title: 'O-'},
   ];
 
   const initialValues = {
