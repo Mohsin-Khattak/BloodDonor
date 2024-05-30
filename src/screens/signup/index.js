@@ -1,13 +1,13 @@
 import {logo} from 'assets/images';
 import {Checkbox} from 'components/atoms/checkbox';
 import {Row} from 'components/atoms/row';
-import GoogleSearchBar from 'components/google-auto-place';
 import {colors} from 'config/colors';
 import {mvs} from 'config/metrices';
 import {useFormik} from 'formik';
 import React from 'react';
-import {Image, Text, View} from 'react-native';
+import {Image, View, Text} from 'react-native';
 import Regular from 'typography/regular-text';
+import {signupFormValidation} from 'validations';
 import {PrimaryButton} from '../../components/atoms/buttons';
 import AppHeader from '../../components/atoms/headers/index';
 import PrimaryInput, {InputWithIcon} from '../../components/atoms/inputs';
@@ -16,6 +16,7 @@ import {useAppDispatch} from '../../hooks/use-store';
 import {onSignupPress} from '../../services/firebase/firebase-actions';
 import Medium from '../../typography/medium-text';
 import styles from './styles';
+import GoogleSearchBar from 'components/google-auto-place';
 
 const Signup = props => {
   const dispatch = useAppDispatch();

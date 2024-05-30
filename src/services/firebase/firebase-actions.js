@@ -23,19 +23,19 @@ export const onLoginPress = (email, password, setLoading, props) => {
     try {
       setLoading(true);
       const res = await signInWithEmailAndPassword(email, password);
-      if (res?.user?.emailVerified) {
-        const response = await getData('users', res?.user?.uid);
-        console.log('res of onLoginPress=>', response);
-        SERVICES.setItem(STORAGEKEYS.userId, res?.user?.uid);
-        SERVICES.setItem(STORAGEKEYS.role, response?.role);
-        dispatch(setUserInfo(response));
-        SERVICES.resetStack(
-          props,
-          response?.role == 'user' ? 'TabNavigator' : 'HospitalStack',
-        );
-      } else {
-        Alert.alert('Your email is not verified');
-      }
+      // if (res?.user?.emailVerified) {
+      const response = await getData('users', res?.user?.uid);
+      console.log('res of onLoginPress=>', response);
+      SERVICES.setItem(STORAGEKEYS.userId, res?.user?.uid);
+      SERVICES.setItem(STORAGEKEYS.role, response?.role);
+      dispatch(setUserInfo(response));
+      SERVICES.resetStack(
+        props,
+        response?.role == 'user' ? 'TabNavigator' : 'HospitalStack',
+      );
+      // } else {
+      //   Alert.alert('Your email is not verified');
+      // }
     } catch (error) {
       console.log('error in onLoginPress', error);
       Alert.alert('', SERVICES.returnError(error));

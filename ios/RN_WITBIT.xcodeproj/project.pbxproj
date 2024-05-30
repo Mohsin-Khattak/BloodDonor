@@ -14,13 +14,13 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		18664DD929279EAC00E80EC2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 18664DD829279EAC00E80EC2 /* GoogleService-Info.plist */; };
 		5837203CFC76444C8E397010 /* index.tsx in Resources */ = {isa = PBXBuildFile; fileRef = 7D248614AE8445DF985D2A37 /* index.tsx */; };
 		7F22EF173553471B985E97BE /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 628C8C910A2A4E55A54DA9B1 /* Poppins-Medium.ttf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		A1D753E3DA694E7E90D9FA7F /* Poppins-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E3DDF61D4D90464D92AEE53E /* Poppins-Bold.ttf */; };
 		B6429BAB55B34824B2709A32 /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54333738B5E44C0B8A404E63 /* Poppins-SemiBold.ttf */; };
 		F3781D7C06A9FCAA86178EFC /* Pods_RN_WITBIT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D67E2BC6B44349FA56521363 /* Pods_RN_WITBIT.framework */; };
-		FA6ED3102C05FD5D00701D12 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FA6ED30F2C05FD5D00701D12 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +43,7 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = RN_WITBIT/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = RN_WITBIT/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = RN_WITBIT/main.m; sourceTree = "<group>"; };
+		18664DD829279EAC00E80EC2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "RN_WITBIT/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-RN_WITBIT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RN_WITBIT.debug.xcconfig"; path = "Target Support Files/Pods-RN_WITBIT/Pods-RN_WITBIT.debug.xcconfig"; sourceTree = "<group>"; };
 		54333738B5E44C0B8A404E63 /* Poppins-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-SemiBold.ttf"; path = "../src/assets/fonts/Poppins-SemiBold.ttf"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-RN_WITBIT.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RN_WITBIT.release.xcconfig"; path = "Target Support Files/Pods-RN_WITBIT/Pods-RN_WITBIT.release.xcconfig"; sourceTree = "<group>"; };
@@ -57,7 +58,6 @@
 		D67E2BC6B44349FA56521363 /* Pods_RN_WITBIT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RN_WITBIT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3DDF61D4D90464D92AEE53E /* Poppins-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Bold.ttf"; path = "../src/assets/fonts/Poppins-Bold.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		FA6ED30F2C05FD5D00701D12 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,7 +130,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				FA6ED30F2C05FD5D00701D12 /* GoogleService-Info.plist */,
+				18664DD829279EAC00E80EC2 /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* RN_WITBIT */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* RN_WITBITTests */,
@@ -274,9 +274,9 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				18664DD929279EAC00E80EC2 /* GoogleService-Info.plist in Resources */,
 				A1D753E3DA694E7E90D9FA7F /* Poppins-Bold.ttf in Resources */,
 				0B407A20787A47D386A2578D /* Poppins-Light.ttf in Resources */,
-				FA6ED3102C05FD5D00701D12 /* GoogleService-Info.plist in Resources */,
 				7F22EF173553471B985E97BE /* Poppins-Medium.ttf in Resources */,
 				02C53126B71940529712171D /* Poppins-Regular.ttf in Resources */,
 				B6429BAB55B34824B2709A32 /* Poppins-SemiBold.ttf in Resources */,

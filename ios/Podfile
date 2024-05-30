@@ -1,16 +1,16 @@
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-# platform :ios, '12.0'
+platform :ios, '12.4'
 install! 'cocoapods', :deterministic_uuids => false
 # for static libraries
-pod 'Firebase', :modular_headers => true
-pod 'GoogleUtilities', :modular_headers => true
+# pod 'Firebase', :modular_headers => true
+# pod 'GoogleUtilities', :modular_headers => true
 # pod 'FirebaseStorageInternal', :modular_headers => true
-pod 'FirebaseAppCheckInterop', :modular_headers => true
-pod 'FirebaseCore', :modular_headers => true
-pod 'FirebaseCoreExtension', :modular_headers => true
-pod 'FirebaseAuthInterop', :modular_headers => true
+# pod 'FirebaseAppCheckInterop', :modular_headers => true
+# pod 'FirebaseCore', :modular_headers => true
+# pod 'FirebaseCoreExtension', :modular_headers => true
+# pod 'FirebaseAuthInterop', :modular_headers => true
 
 target 'RN_WITBIT' do
   config = use_native_modules!
